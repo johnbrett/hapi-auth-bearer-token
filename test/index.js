@@ -55,7 +55,6 @@ describe('Bearer', function () {
         });
     });
 
-
     it('returns an error when auth is set to required by default', function (done) {
 
         var request = { method: 'POST', url: '/basic_default_auth' };
@@ -78,16 +77,6 @@ describe('Bearer', function () {
         });
     });
 
-    it('returns an error when poorly formed scheme', function (done) {
-
-        var request = { method: 'POST', url: '/basic', headers: { authorization: 'Bearer ' } };
-
-        server.inject(request, function (res) {
-            expect(res.statusCode).to.equal(400);
-            done();
-        });
-    });
-
     it('returns an error with incorrect strategy', function (done) {
 
         server.auth.strategy('default_2', 'bearer-access-token', {
@@ -105,6 +94,66 @@ describe('Bearer', function () {
         server.inject(request, function (res) {
 
             expect(res.statusCode).to.equal(400);
+            done();
+        });
+    });
+
+    it('it handles when strategy returns an error to validateFunc', function (done) {
+
+        server.auth.strategy('default_3', 'bearer-access-token', {
+            validateFunc: function(token, callback) {
+                return callback({'Error':'Error'}, false, null);
+            }
+        });
+
+        server.route([
+            { method: 'GET', path: '/basic_default_3', handler: basicHandler, config: { auth: 'default_3' } }
+        ]);
+
+        var request = { method: 'GET', url: '/basic_default_3', headers: { authorization: 'Bearer 12345678' } };
+
+        server.inject(request, function (res) {
+            expect(res.statusCode).to.equal(200);
+            done();
+        });
+    });
+
+    it('it handles when isValid is false passed to validateFunc', function (done) {
+
+        server.auth.strategy('default_4', 'bearer-access-token', {
+            validateFunc: function(token, callback) {
+                return callback(null, false, null);
+            }
+        });
+
+        server.route([
+            { method: 'GET', path: '/basic_default_4', handler: basicHandler, config: { auth: 'default_4' } }
+        ]);
+
+        var request = { method: 'GET', url: '/basic_default_4', headers: { authorization: 'Bearer 12345678' } };
+
+        server.inject(request, function (res) {
+            expect(res.statusCode).to.equal(401);
+            done();
+        });
+    });
+
+    it('it handles when no credentials passed to validateFunc', function (done) {
+
+        server.auth.strategy('default_5', 'bearer-access-token', {
+            validateFunc: function(token, callback) {
+                return callback(null, true, null);
+            }
+        });
+
+        server.route([
+            { method: 'GET', path: '/basic_default_5', handler: basicHandler, config: { auth: 'default_5' } }
+        ]);
+
+        var request = { method: 'GET', url: '/basic_default_5', headers: { authorization: 'Bearer 12345678' } };
+
+        server.inject(request, function (res) {
+            expect(res.statusCode).to.equal(500);
             done();
         });
     });
