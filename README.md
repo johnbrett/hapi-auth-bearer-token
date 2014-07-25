@@ -1,4 +1,4 @@
-### hapi-auth-bearer-token
+# Hapi auth bearer token
 
 [**hapi**](https://github.com/spumko/hapi) Bearer and Access Token authentication plugin
 
