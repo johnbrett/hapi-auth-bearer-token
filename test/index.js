@@ -157,4 +157,35 @@ describe('Bearer', function () {
             done();
         });
     });
+
+        it('returns a reply on successful auth with access_token renamed and set', function (done) {
+
+        var server = new Hapi.Server({ debug: false });
+        var accessTokenName = "my_access_token";
+
+        server.pack.register(require('../'), function (err) {
+
+            expect(err).to.not.exist;
+
+            server.auth.strategy('default', 'bearer-access-token', true, {
+                validateFunc: function(token, callback) {
+                    return callback(null, token==="12345678",  { token: token });
+                },
+                accessTokenName: "my_access_token"
+            });
+
+            server.route([
+                { method: 'POST', path: '/basic', handler: basicHandler, config: { auth: 'default' } }
+            ]);
+
+        });
+
+        var request = { method: 'POST', url: '/basic?my_access_token=12345678' };
+
+        server.inject(request, function (res) {
+            expect(res.result).to.exist;
+            expect(res.result).to.equal('ok');
+            done();
+        });
+    });
 });
