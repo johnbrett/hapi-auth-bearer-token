@@ -12,6 +12,9 @@ Bearer authentication requires validating a token passed in by either the bearer
         - `credentials` - a credentials object passed back to the application in `request.auth.credentials`. Typically, `credentials` are only
           included when `isValid` is `true`, but there are cases when the application needs to know who tried to authenticate even when it fails
           (e.g. with authentication mode `'try'`).
+- `options` - (optional) 
+    - `accessTokenName` (Default: 'access_token') - Rename the token query parameter key e.g. 'sample_token_name' would rename the token query parameter to /route1?sample_token_name=12345678.
+    - `allowQueryToken` (Default: true) - Disable accepting token by query parameter, forcing token to be passed in through authorization header.
 
 ```javascript
 var Hapi = require('hapi');
@@ -41,3 +44,5 @@ server.pack.register(require('hapi-auth-bearer-token'), function (err) {
     })
 });
 ```
+
+License MIT @ John Brett 2014

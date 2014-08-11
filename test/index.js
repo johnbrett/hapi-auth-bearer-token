@@ -57,13 +57,25 @@ describe('Bearer', function () {
                 validateFunc: noCredentialValidateFunc
             });
 
+            server.auth.strategy('query_token_enabled', 'bearer-access-token', {
+                validateFunc: defaultValidateFunc,
+                allowQueryToken: true
+            });
+
+            server.auth.strategy('query_token_disabled', 'bearer-access-token', {
+                validateFunc: defaultValidateFunc,
+                allowQueryToken: false
+            });
+
             server.route([
                 { method: 'POST', path: '/basic', handler: defaultHandler, config: { auth: 'default' } },
                 { method: 'POST', path: '/basic_default_auth', handler: defaultHandler, config: { } },
                 { method: 'GET', path: '/basic_named_token', handler: defaultHandler, config: { auth: 'default_named_access_token' } },
                 { method: 'GET', path: '/basic_validate_error', handler: defaultHandler, config: { auth: 'with_error_strategy' } },
                 { method: 'GET', path: '/always_reject', handler: defaultHandler, config: { auth: 'always_reject' } },
-                { method: 'GET', path: '/no_credentials', handler: defaultHandler, config: { auth: 'no_credentials' } }
+                { method: 'GET', path: '/no_credentials', handler: defaultHandler, config: { auth: 'no_credentials' } },
+                { method: 'GET', path: '/query_token_disabled', handler: defaultHandler, config: { auth: 'query_token_disabled' } },
+                { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, config: { auth: 'query_token_enabled' } }
             ]);
 
             done();
@@ -134,7 +146,7 @@ describe('Bearer', function () {
         });
     });
 
-    it('it returns 500 when no credentials passed to validateFunc', function (done) {
+    it('returns 500 when no credentials passed to validateFunc', function (done) {
         var request = { method: 'GET', url: '/no_credentials', headers: { authorization: 'Bearer 12345678' } };
         server.inject(request, function (res) {
             expect(res.statusCode).to.equal(500);
@@ -156,6 +168,23 @@ describe('Bearer', function () {
         server.inject(request_header_token, function(res) {
             expect(res.statusCode).to.equal(200);
             expect(res.result).to.equal('success');
+            done();
+        })
+    });
+
+    it('allows you to enable auth by query token', function (done) {
+        var request_header_token  = { method: 'GET', url: '/query_token_enabled?access_token=12345678'};
+        server.inject(request_header_token, function(res) {
+            expect(res.statusCode).to.equal(200);
+            expect(res.result).to.equal('success');
+            done();
+        })
+    });
+
+    it('allows you to disable auth by query token', function (done) {
+        var request_header_token  = { method: 'GET', url: '/query_token_disabled?access_token=12345678'};
+        server.inject(request_header_token, function(res) {
+            expect(res.statusCode).to.equal(401);
             done();
         })
     });
