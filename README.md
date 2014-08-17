@@ -19,6 +19,10 @@ Bearer authentication requires validating a token passed in by either the bearer
 ```javascript
 var Hapi = require('hapi');
 
+var defaultHandler = function (request, reply) {
+    reply('success');
+};
+
 var server = Hapi.createServer('localhost', 8080, {
     cors: true
 });
@@ -37,7 +41,7 @@ server.pack.register(require('hapi-auth-bearer-token'), function (err) {
         }
     });
 
-    server.route({ method: 'GET', path: '/', config: { auth: 'simple' } });
+    server.route({ method: 'GET', path: '/', handler: defaultHandler, config: { auth: 'simple' } });
 
     server.start(function () {
         console.log('Server started at: ' + server.info.uri);
