@@ -1,7 +1,7 @@
 {
   "name": "hapi-auth-bearer-token",
   "description": "Simple Bearer authentication plugin. Accepts as access_token as query param also.",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "author": "John Brett <johnbrett7@gmail.com> (http://blog.johnbrett.me)",
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "hapi": "6.x.x",
-    "lab": "3.x.x"
+    "lab": "4.x.x"
   },
   "scripts": {
     "test": "node ./node_modules/lab/bin/lab -c"
