@@ -1,6 +1,6 @@
 {
   "name": "hapi-auth-bearer-token",
-  "description": "Simple Bearer authentication plugin. Accepts as access_token as query param also.",
+  "description": "Simple Bearer authentication plugin, accepts token by Header or Query parameter.",
   "version": "1.1.5",
   "author": "John Brett <johnbrett7@gmail.com> (http://blog.johnbrett.me)",
   "repository": {
