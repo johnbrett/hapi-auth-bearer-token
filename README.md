@@ -2,6 +2,8 @@
 
 [**hapi**](https://github.com/spumko/hapi) Bearer and Access Token authentication plugin
 
+This project is actively maintained and has 100% unit test coverage. If you have any problems using it please raise an issue. Please star if using, so I know where to focus time spent on open source work.
+
 Bearer authentication requires validating a token passed in by either the bearer authorization header, or by an access_token query parameter. The `'bearer-access-token'` scheme takes the following options:
 
 - `validateFunc` - (required) a token lookup and validation function with the signature `function(token, callback)` where:
