@@ -4,6 +4,8 @@
 
 This project is actively maintained and has 100% unit test coverage. If you have any problems using it or feature requests, please raise an issue. Please star if using, so I know where to focus time spent on open source work.
 
+**Breaking Changes**: As of 2.0.0, Using `this` inside of validateFunc now maps to the request object instead of the window global. This has been previously requested, and allows for more flexibility in specifying auth for specific routes.
+
 Bearer authentication requires validating a token passed in by either the bearer authorization header, or by an access_token query parameter. The `'bearer-access-token'` scheme takes the following options:
 
 - `validateFunc` - (required) a token lookup and validation function with the signature `function(token, callback)` where:
