@@ -1,10 +1,10 @@
 # Hapi auth bearer token [![Build Status](https://travis-ci.org/johnbrett/hapi-auth-bearer-token.svg?branch=master)](https://travis-ci.org/johnbrett/hapi-auth-bearer-token) [![Dependency Status](https://david-dm.org/johnbrett/hapi-auth-bearer-token.svg)](https://david-dm.org/johnbrett/hapi-auth-bearer-token)
 
-[**hapi**](https://github.com/spumko/hapi) Bearer and Access Token authentication plugin
+[**hapi**](https://github.com/spumko/hapi) Bearer and Access Token authentication scheme
 
 This project is actively maintained and has 100% unit test coverage. If you have any problems using it or feature requests, please raise an issue. Please star if using, so I know where to focus time spent on open source work.
 
-**Breaking Changes**: As of 2.0.0, Using `this` inside of validateFunc now maps to the request object instead of the window global. This has been previously requested, and allows for more flexibility in specifying auth for specific routes.
+*Breaking Changes: As of 2.0.0, Using `this` inside of validateFunc now maps to the request object. This has been previously requested, and allows for more flexibility in specifying auth for specific routes or request options.*
 
 Bearer authentication requires validating a token passed in by either the bearer authorization header, or by an access_token query parameter. The `'bearer-access-token'` scheme takes the following options:
 
