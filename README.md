@@ -2,7 +2,7 @@
 
 [**hapi**](https://github.com/spumko/hapi) Bearer and Access Token authentication scheme
 
-This project is actively maintained and has 100% unit test coverage. If you have any problems using it or feature requests, please raise an issue. Please star if using, so I know where to focus time spent on open source work.
+This project is actively maintained and has 100% unit test coverage. If you have any problems using it or have any feature requests, please raise an issue. Please star if using, so I know where to focus time spent on open source work.
 
 *Breaking Changes: As of 2.0.0, Using `this` inside of validateFunc now maps to the request object. This has been previously requested, and allows for more flexibility in specifying auth for specific routes or request options.*
 
