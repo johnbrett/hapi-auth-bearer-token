@@ -97,6 +97,15 @@ describe('Bearer', function () {
         });
     });
 
+    it('returns 200 and success with correct bearer token header set in multiple authorization header', function (done) {
+        var request = { method: 'POST', url: '/basic', headers: { authorization: "FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678" } };
+        server.inject(request, function (res) {
+            expect(res.statusCode).to.equal(200);
+            expect(res.result).to.equal('success');
+            done();
+        });
+    });
+
     it('returns 200 and success with correct bearer token query param set', function (done) {
         var request = { method: 'POST', url: '/basic?access_token=12345678' };
         server.inject(request, function (res) {
