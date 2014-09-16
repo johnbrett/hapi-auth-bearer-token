@@ -1,4 +1,5 @@
-# Hapi auth bearer token [![Build Status](https://travis-ci.org/johnbrett/hapi-auth-bearer-token.svg?branch=master)](https://travis-ci.org/johnbrett/hapi-auth-bearer-token) [![Dependency Status](https://david-dm.org/johnbrett/hapi-auth-bearer-token.svg)](https://david-dm.org/johnbrett/hapi-auth-bearer-token)
+# Hapi auth bearer token
+[![Build Status](https://travis-ci.org/johnbrett/hapi-auth-bearer-token.svg?branch=master)](https://travis-ci.org/johnbrett/hapi-auth-bearer-token) [![Dependency Status](https://david-dm.org/johnbrett/hapi-auth-bearer-token.svg)](https://david-dm.org/johnbrett/hapi-auth-bearer-token) [![Test Coverage](https://codeclimate.com/github/johnbrett/hapi-auth-bearer-token/badges/coverage.svg)](https://codeclimate.com/github/johnbrett/hapi-auth-bearer-token)
 
 [**hapi**](https://github.com/spumko/hapi) Bearer and Access Token authentication scheme
 
