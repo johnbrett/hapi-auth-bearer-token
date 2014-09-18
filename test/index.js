@@ -68,6 +68,11 @@ describe('Bearer', function () {
                 allowQueryToken: false
             });
 
+            server.auth.strategy('multiple_headers', 'bearer-access-token', {
+                validateFunc: defaultValidateFunc,
+                allowMultipleHeaders: true
+            });
+
             server.route([
                 { method: 'POST', path: '/basic', handler: defaultHandler, config: { auth: 'default' } },
                 { method: 'POST', path: '/basic_default_auth', handler: defaultHandler, config: { } },
@@ -76,7 +81,8 @@ describe('Bearer', function () {
                 { method: 'GET', path: '/always_reject', handler: defaultHandler, config: { auth: 'always_reject' } },
                 { method: 'GET', path: '/no_credentials', handler: defaultHandler, config: { auth: 'no_credentials' } },
                 { method: 'GET', path: '/query_token_disabled', handler: defaultHandler, config: { auth: 'query_token_disabled' } },
-                { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, config: { auth: 'query_token_enabled' } }
+                { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, config: { auth: 'query_token_enabled' } },
+                { method: 'GET', path: '/multiple_headers_enabled', handler: defaultHandler, config: { auth: 'multiple_headers' } }
             ]);
 
             done();
@@ -98,7 +104,7 @@ describe('Bearer', function () {
     });
 
     it('returns 200 and success with correct bearer token header set in multiple authorization header', function (done) {
-        var request = { method: 'POST', url: '/basic', headers: { authorization: "Bearer 12345678; FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018" } };
+        var request = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: "Bearer 12345678; FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018" } };
         server.inject(request, function (res) {
             expect(res.statusCode).to.equal(200);
             expect(res.result).to.equal('success');
@@ -107,7 +113,7 @@ describe('Bearer', function () {
     });
 
     it('returns 200 and success with correct bearer token header set in multiple places of the authorization header', function (done) {
-        var request = { method: 'POST', url: '/basic', headers: { authorization: "FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678" } };
+        var request = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: "FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678" } };
         server.inject(request, function (res) {
             expect(res.statusCode).to.equal(200);
             expect(res.result).to.equal('success');
@@ -202,6 +208,38 @@ describe('Bearer', function () {
 
     it('allows you to disable auth by query token', function (done) {
         var request_header_token  = { method: 'GET', url: '/query_token_disabled?access_token=12345678'};
+        server.inject(request_header_token, function(res) {
+            expect(res.statusCode).to.equal(401);
+            done();
+        })
+    });
+
+    it('disables multiple auth headers by default', function (done) {
+        var request = { method: 'POST', url: '/basic', headers: { authorization: 'RandomAuthHeader 1234; Bearer 12345678' } };
+        server.inject(request, function(res) {
+            expect(res.statusCode).to.equal(401);
+            done();
+        })
+    });
+
+    it('allows you to enable multiple auth headers', function (done) {
+        var request_header_token  = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: 'RandomAuthHeader 1234; Bearer 12345678' } };
+        server.inject(request_header_token, function(res) {
+            expect(res.statusCode).to.equal(200);
+            done();
+        })
+    });
+
+    it('return unauthorized when no auth info and multiple headers disabled', function (done) {
+        var request_header_token  = { method: 'POST', url: '/basic', headers: { authorization: 'x' } };
+        server.inject(request_header_token, function(res) {
+            expect(res.statusCode).to.equal(401);
+            done();
+        })
+    });
+
+    it('return unauthorized when no auth info and multiple headers enabled', function (done) {
+        var request_header_token  = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: 'x' } };
         server.inject(request_header_token, function(res) {
             expect(res.statusCode).to.equal(401);
             done();
