@@ -5,8 +5,6 @@
 
 This project is actively maintained and has 100% unit test coverage. If you have any problems using it or have any feature requests, please raise an issue. Please star if using, so I know where to focus time spent on open source work.
 
-*Breaking Changes: As of 2.0.0, Using `this` inside of validateFunc now maps to the request object. This has been previously requested, and allows for more flexibility in specifying auth for specific routes or request options.*
-
 Bearer authentication requires validating a token passed in by either the bearer authorization header, or by an access_token query parameter. The `'bearer-access-token'` scheme takes the following options:
 
 - `validateFunc` - (required) a token lookup and validation function with the signature `function(token, callback)` where:
@@ -20,13 +18,10 @@ Bearer authentication requires validating a token passed in by either the bearer
 - `options` - (optional) 
     - `accessTokenName` (Default: 'access_token') - Rename the token query parameter key e.g. 'sample_token_name' would rename the token query parameter to /route1?sample_token_name=12345678.
     - `allowQueryToken` (Default: true) - Disable accepting token by query parameter, forcing token to be passed in through authorization header.
+    - `allowMultipleHeaders` (Default: false) - Allow multiple authorization headers in request, e.g. `Authorization: FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678`
 
 ```javascript
 var Hapi = require('hapi');
-
-var defaultHandler = function (request, reply) {
-    reply('success');
-};
 
 var server = Hapi.createServer('localhost', 8080, {
     cors: true
@@ -35,6 +30,9 @@ var server = Hapi.createServer('localhost', 8080, {
 server.pack.register(require('hapi-auth-bearer-token'), function (err) {
 
     server.auth.strategy('simple', 'bearer-access-token', {
+        allowQueryToken: true,              // optional, true by default
+        allowMultipleHeaders: false,        // optional, true by default
+        accessTokenName: 'access_token',    // optional, 'access_token' by default
         validateFunc: function( token, callback ) {
             // Use a real strategy here,
             // comparing with a token from your database for example
@@ -46,7 +44,14 @@ server.pack.register(require('hapi-auth-bearer-token'), function (err) {
         }
     });
 
-    server.route({ method: 'GET', path: '/', handler: defaultHandler, config: { auth: 'simple' } });
+    server.route({ 
+        method: 'GET', 
+        path: '/', 
+        handler: function (request, reply) {
+            reply('success');
+        }, 
+        config: { auth: 'simple' } 
+    });
 
     server.start(function () {
         console.log('Server started at: ' + server.info.uri);
