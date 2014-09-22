@@ -26,6 +26,10 @@ describe('Bearer', function () {
         return callback({'Error':'Error'}, false, null);
     }
 
+    var boomErrorValidateFunc = function(token, callback) {
+        return callback(Hapi.error.badImplementation('test info'), false, null);
+    }
+
     var noCredentialValidateFunc = function(token, callback) {
         return callback(null, true, null);
     }
@@ -54,6 +58,10 @@ describe('Bearer', function () {
                 validateFunc: alwaysErrorValidateFunc
             });
 
+            server.auth.strategy('boom_error_strategy', 'bearer-access-token', {
+                validateFunc: boomErrorValidateFunc
+            });
+
             server.auth.strategy('no_credentials', 'bearer-access-token', {
                 validateFunc: noCredentialValidateFunc
             });
@@ -78,6 +86,7 @@ describe('Bearer', function () {
                 { method: 'POST', path: '/basic_default_auth', handler: defaultHandler, config: { } },
                 { method: 'GET', path: '/basic_named_token', handler: defaultHandler, config: { auth: 'default_named_access_token' } },
                 { method: 'GET', path: '/basic_validate_error', handler: defaultHandler, config: { auth: 'with_error_strategy' } },
+                { method: 'GET', path: '/boom_validate_error', handler: defaultHandler, config: { auth: 'boom_error_strategy' } },
                 { method: 'GET', path: '/always_reject', handler: defaultHandler, config: { auth: 'always_reject' } },
                 { method: 'GET', path: '/no_credentials', handler: defaultHandler, config: { auth: 'no_credentials' } },
                 { method: 'GET', path: '/query_token_disabled', handler: defaultHandler, config: { auth: 'query_token_disabled' } },
@@ -159,6 +168,15 @@ describe('Bearer', function () {
         server.inject(request, function (res) {
             expect(res.statusCode).to.equal(500);
             expect(JSON.stringify(res.result)).to.equal("{\"Error\":\"Error\"}");
+            done();
+        });
+    });
+
+    it('returns 500 when strategy returns a Boom error to validateFunc', function (done) {
+        var request = { method: 'GET', url: '/boom_validate_error', headers: { authorization: 'Bearer 12345678' } };
+        server.inject(request, function (res) {
+            expect(res.statusCode).to.equal(500);
+            expect(JSON.stringify(res.result)).to.equal("{\"statusCode\":500,\"error\":\"Internal Server Error\",\"message\":\"An internal server error occurred\"}");
             done();
         });
     });
