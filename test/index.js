@@ -163,10 +163,10 @@ describe('Bearer', function () {
         });
     });
 
-    it('returns 500 when strategy returns an error to validateFunc', function (done) {
+    it('returns 500 when strategy returns a regular object to validateFunc', function (done) {
         var request = { method: 'GET', url: '/basic_validate_error', headers: { authorization: 'Bearer 12345678' } };
         server.inject(request, function (res) {
-            expect(res.statusCode).to.equal(500);
+            expect(res.statusCode).to.equal(200);
             expect(JSON.stringify(res.result)).to.equal("{\"Error\":\"Error\"}");
             done();
         });
