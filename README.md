@@ -37,8 +37,9 @@ server.pack.register(require('hapi-auth-bearer-token'), function (err) {
         accessTokenName: 'access_token',    // optional, 'access_token' by default
         validateFunc: function( token, callback ) {
         
-            // For convenience, the request object can be accessed from `this` within
-            var request = this;  validateFunc.
+            // For convenience, the request object can be accessed 
+            // from `this` within validateFunc.
+            var request = this;  
         
             // Use a real strategy here, 
             // comparing with a token from your database for example
