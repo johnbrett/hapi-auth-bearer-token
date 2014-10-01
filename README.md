@@ -20,6 +20,8 @@ Bearer authentication requires validating a token passed in by either the bearer
     - `allowQueryToken` (Default: true) - Disable accepting token by query parameter, forcing token to be passed in through authorization header.
     - `allowMultipleHeaders` (Default: false) - Allow multiple authorization headers in request, e.g. `Authorization: FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678`
 
+For convenience, the `request` object can be accessed from `this` within validateFunc. This allows some greater flexibility with authentication, such different authentication checks for different routes.
+
 ```javascript
 var Hapi = require('hapi');
 
@@ -34,8 +36,10 @@ server.pack.register(require('hapi-auth-bearer-token'), function (err) {
         allowMultipleHeaders: false,        // optional, true by default
         accessTokenName: 'access_token',    // optional, 'access_token' by default
         validateFunc: function( token, callback ) {
-            // Use a real strategy here,
-            // comparing with a token from your database for example
+        
+            var request = this; // For convenience, the request object can be accessed from `this` within validateFunc.
+        
+            // Use a real strategy here, comparing with a token from your database for example
             if(token === "1234"){
                 callback(null, true, { token: token })
             } else {
