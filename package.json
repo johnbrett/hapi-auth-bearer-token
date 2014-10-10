@@ -26,10 +26,10 @@
     "hoek": "2.x.x"
   },
   "peerDependencies": {
-    "hapi": "6.x.x"
+    "hapi": ">= 6.x.x < 8.x.x"
   },
   "devDependencies": {
-    "hapi": "6.x.x",
+    "hapi": ">= 6.x.x < 8.x.x",
     "lab": "4.x.x"
   },
   "scripts": {
