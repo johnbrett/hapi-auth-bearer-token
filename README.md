@@ -33,7 +33,7 @@ server.pack.register(require('hapi-auth-bearer-token'), function (err) {
 
     server.auth.strategy('simple', 'bearer-access-token', {
         allowQueryToken: true,              // optional, true by default
-        allowMultipleHeaders: false,        // optional, true by default
+        allowMultipleHeaders: false,        // optional, false by default
         accessTokenName: 'access_token',    // optional, 'access_token' by default
         validateFunc: function( token, callback ) {
         
