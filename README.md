@@ -25,11 +25,10 @@ For convenience, the `request` object can be accessed from `this` within validat
 ```javascript
 var Hapi = require('hapi');
 
-var server = Hapi.createServer('localhost', 8080, {
-    cors: true
-});
+var server = new Hapi.Server();
+server.connection();
 
-server.pack.register(require('hapi-auth-bearer-token'), function (err) {
+server.register(require('hapi-auth-bearer-token'), function (err) {
 
     server.auth.strategy('simple', 'bearer-access-token', {
         allowQueryToken: true,              // optional, true by default
@@ -50,20 +49,20 @@ server.pack.register(require('hapi-auth-bearer-token'), function (err) {
             }
         }
     });
-
-    server.route({ 
-        method: 'GET', 
-        path: '/', 
-        handler: function (request, reply) {
-            reply('success');
-        }, 
-        config: { auth: 'simple' } 
-    });
-
-    server.start(function () {
-        console.log('Server started at: ' + server.info.uri);
-    })
 });
+
+server.route({ 
+    method: 'GET', 
+    path: '/', 
+    handler: function (request, reply) {
+        reply('success');
+    }, 
+    config: { auth: 'simple' } 
+});
+
+server.start(function () {
+    console.log('Server started at: ' + server.info.uri);
+})
 ```
 
 License MIT @ John Brett 2014
