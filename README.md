@@ -26,7 +26,7 @@ For convenience, the `request` object can be accessed from `this` within validat
 var Hapi = require('hapi');
 
 var server = new Hapi.Server();
-server.connection();
+server.connection({ port: 8080 });
 
 server.register(require('hapi-auth-bearer-token'), function (err) {
 
