@@ -38,7 +38,7 @@ describe('Bearer', function () {
 
     before(function(done){
 
-        server.pack.register(require('../'), function (err) {
+        server.register(require('../'), function (err) {
             expect(err).to.not.exist;
 
             server.auth.strategy('default', 'bearer-access-token', true, {
