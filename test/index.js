@@ -1,5 +1,6 @@
 var Lab = require('lab');
 var Hapi = require('hapi');
+var Boom = require('boom');
 var lab = exports.lab = Lab.script();
 
 var expect = Lab.expect;
@@ -27,18 +28,20 @@ describe('Bearer', function () {
     }
 
     var boomErrorValidateFunc = function(token, callback) {
-        return callback(Hapi.error.badImplementation('test info'), false, null);
+        return callback(Boom.badImplementation('test info'), false, null);
     }
 
     var noCredentialValidateFunc = function(token, callback) {
         return callback(null, true, null);
     }
 
-    var server = new Hapi.Server({debug: false})
+    var server = new Hapi.Server({ debug: false });
+
+    server.connection({ port: 8080 });
 
     before(function(done){
 
-        server.pack.register(require('../'), function (err) {
+        server.register(require('../'), function (err) {
             expect(err).to.not.exist;
 
             server.auth.strategy('default', 'bearer-access-token', true, {
@@ -107,7 +110,7 @@ describe('Bearer', function () {
         var request = { method: 'POST', url: '/basic', headers: { authorization: "Bearer 12345678" } };
         server.inject(request, function (res) {
             expect(res.statusCode).to.equal(200);
-            expect(res.result).to.equal('success');
+            expect(res.result).to.eql({ credentials: { token: '12345678' } });
             done();
         });
     });
@@ -116,7 +119,7 @@ describe('Bearer', function () {
         var request = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: "Bearer 12345678; FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018" } };
         server.inject(request, function (res) {
             expect(res.statusCode).to.equal(200);
-            expect(res.result).to.equal('success');
+            expect(res.result).to.eql({ credentials: { token: '12345678'}});
             done();
         });
     });
@@ -125,7 +128,7 @@ describe('Bearer', function () {
         var request = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: "FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678" } };
         server.inject(request, function (res) {
             expect(res.statusCode).to.equal(200);
-            expect(res.result).to.equal('success');
+            expect(res.result).to.eql({ credentials: { token: '12345678'}});
             done();
         });
     });
@@ -134,7 +137,7 @@ describe('Bearer', function () {
         var request = { method: 'POST', url: '/basic?access_token=12345678' };
         server.inject(request, function (res) {
             expect(res.statusCode).to.equal(200);
-            expect(res.result).to.equal('success');
+            expect(res.result).to.eql({ credentials: { token: '12345678'}});
             done();
         });
     });
@@ -201,7 +204,7 @@ describe('Bearer', function () {
         var request_query_token = { method: 'GET', url: '/basic_named_token?my_access_token=12345678' };
         server.inject(request_query_token, function (res) {
             expect(res.statusCode).to.equal(200);
-            expect(res.result).to.equal('success');
+            expect(res.result).to.eql({ credentials: { token: '12345678'}});
             done();
         });
     });
@@ -210,7 +213,7 @@ describe('Bearer', function () {
         var request_header_token  = { method: 'GET', url: '/basic_named_token', headers: { authorization: 'Bearer 12345678' } };
         server.inject(request_header_token, function(res) {
             expect(res.statusCode).to.equal(200);
-            expect(res.result).to.equal('success');
+            expect(res.result).to.eql({ credentials: { token: '12345678'}});
             done();
         })
     });
@@ -219,7 +222,7 @@ describe('Bearer', function () {
         var request_header_token  = { method: 'GET', url: '/query_token_enabled?access_token=12345678'};
         server.inject(request_header_token, function(res) {
             expect(res.statusCode).to.equal(200);
-            expect(res.result).to.equal('success');
+            expect(res.result).to.eql({ credentials: { token: '12345678'}});
             done();
         })
     });
