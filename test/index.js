@@ -35,7 +35,7 @@ describe('Bearer', function () {
         return callback(null, true, null);
     }
 
-    var server = new Hapi.Server();
+    var server = new Hapi.Server({ debug: false });
 
     server.connection({ port: 8080 });
 
