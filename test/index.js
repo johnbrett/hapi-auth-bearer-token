@@ -1,5 +1,6 @@
 var Lab = require('lab');
 var Hapi = require('hapi');
+var Boom = require('boom');
 var lab = exports.lab = Lab.script();
 
 var expect = Lab.expect;
@@ -27,7 +28,7 @@ describe('Bearer', function () {
     }
 
     var boomErrorValidateFunc = function(token, callback) {
-        return callback(Hapi.error.badImplementation('test info'), false, null);
+        return callback(Boom.badImplementation('test info'), false, null);
     }
 
     var noCredentialValidateFunc = function(token, callback) {
@@ -35,10 +36,11 @@ describe('Bearer', function () {
     }
 
     var server = new Hapi.Server({debug: false})
+    server.connection()
 
     before(function(done){
 
-        server.pack.register(require('../'), function (err) {
+        server.register(require('../'), function (err) {
             expect(err).to.not.exist;
 
             server.auth.strategy('default', 'bearer-access-token', true, {
