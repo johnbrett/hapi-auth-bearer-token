@@ -35,7 +35,7 @@ describe('Bearer', function () {
         return callback(null, true, null);
     }
 
-    var server = new Hapi.Server({debug: false})
+    var server = new Hapi.Server({ debug: false })
     server.connection()
 
     before(function(done){
