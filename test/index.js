@@ -83,6 +83,11 @@ describe('Bearer', function () {
                 allowMultipleHeaders: true
             });
 
+            server.auth.strategy('custom_token_type', 'bearer-access-token', {
+                validateFunc: defaultValidateFunc,
+                tokenType: 'Basic'
+            });
+
             server.route([
                 { method: 'POST', path: '/basic', handler: defaultHandler, config: { auth: 'default' } },
                 { method: 'POST', path: '/basic_default_auth', handler: defaultHandler, config: { } },
@@ -93,7 +98,8 @@ describe('Bearer', function () {
                 { method: 'GET', path: '/no_credentials', handler: defaultHandler, config: { auth: 'no_credentials' } },
                 { method: 'GET', path: '/query_token_disabled', handler: defaultHandler, config: { auth: 'query_token_disabled' } },
                 { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, config: { auth: 'query_token_enabled' } },
-                { method: 'GET', path: '/multiple_headers_enabled', handler: defaultHandler, config: { auth: 'multiple_headers' } }
+                { method: 'GET', path: '/multiple_headers_enabled', handler: defaultHandler, config: { auth: 'multiple_headers' } },
+                { method: 'GET', path: '/custom_token_type', handler: defaultHandler, config: { auth: 'custom_token_type' } }
             ]);
 
             done();
@@ -265,4 +271,22 @@ describe('Bearer', function () {
             done();
         })
     });
+
+    it('return unauthorized when different token type is used', function (done) {
+        var request_header_token  = { method: 'GET', url: '/custom_token_type', headers: { authorization: 'Bearer 12345678' } };
+        server.inject(request_header_token, function(res) {
+            expect(res.statusCode).to.equal(401);
+            done();
+        })
+    });
+
+    it('return 200 when correct token type is used', function (done) {
+        var request_header_token  = { method: 'GET', url: '/custom_token_type', headers: { authorization: 'Basic 12345678' } };
+        server.inject(request_header_token, function(res) {
+            expect(res.statusCode).to.equal(200);
+            done();
+        })
+    });
+
+
 });
