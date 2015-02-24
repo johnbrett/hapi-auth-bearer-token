@@ -1,9 +1,10 @@
 var Lab = require('lab');
+var Code = require('code');
 var Hapi = require('hapi');
 var Boom = require('boom');
 var lab = exports.lab = Lab.script();
 
-var expect = Lab.expect;
+var expect = Code.expect;
 var before = lab.before;
 var after = lab.after;
 var describe = lab.describe;
