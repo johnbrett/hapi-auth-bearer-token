@@ -14,35 +14,35 @@ describe('Bearer', function () {
 
     var defaultHandler = function (request, reply) {
         reply('success');
-    }
+    };
 
     var defaultValidateFunc = function(token, callback) {
-        return callback(null, token==="12345678",  { token: token });
-    }
+        return callback(null, token === '12345678',  { token: token });
+    };
 
     var alwaysRejectValidateFunc = function(token, callback) {
         return callback(null, false, { token: token });
-    }
+    };
 
     var alwaysErrorValidateFunc = function(token, callback) {
         return callback({'Error':'Error'}, false, null);
-    }
+    };
 
     var boomErrorValidateFunc = function(token, callback) {
         return callback(Boom.badImplementation('test info'), false, null);
-    }
+    };
 
     var noCredentialValidateFunc = function(token, callback) {
         return callback(null, true, null);
-    }
+    };
 
-    var server = new Hapi.Server({ debug: false })
-    server.connection()
+    var server = new Hapi.Server({ debug: false });
+    server.connection();
 
     before(function(done){
 
         server.register(require('../'), function (err) {
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
 
             server.auth.strategy('default', 'bearer-access-token', true, {
                 validateFunc: defaultValidateFunc
@@ -50,7 +50,7 @@ describe('Bearer', function () {
 
             server.auth.strategy('default_named_access_token', 'bearer-access-token', {
                 validateFunc: defaultValidateFunc,
-                accessTokenName: "my_access_token"
+                accessTokenName: 'my_access_token'
             });
 
             server.auth.strategy('always_reject', 'bearer-access-token', {
@@ -105,15 +105,15 @@ describe('Bearer', function () {
 
             done();
         });
-    })
+    });
 
     after(function(done) {
-        server = null
-        done()
-    })
+        server = null;
+        done();
+    });
 
     it('returns 200 and success with correct bearer token header set', function (done) {
-        var request = { method: 'POST', url: '/basic', headers: { authorization: "Bearer 12345678" } };
+        var request = { method: 'POST', url: '/basic', headers: { authorization: 'Bearer 12345678' } };
         server.inject(request, function (res) {
             expect(res.statusCode).to.equal(200);
             expect(res.result).to.equal('success');
@@ -122,7 +122,7 @@ describe('Bearer', function () {
     });
 
     it('returns 200 and success with correct bearer token header set in multiple authorization header', function (done) {
-        var request = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: "Bearer 12345678; FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018" } };
+        var request = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: 'Bearer 12345678; FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018' } };
         server.inject(request, function (res) {
             expect(res.statusCode).to.equal(200);
             expect(res.result).to.equal('success');
@@ -131,7 +131,7 @@ describe('Bearer', function () {
     });
 
     it('returns 200 and success with correct bearer token header set in multiple places of the authorization header', function (done) {
-        var request = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: "FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678" } };
+        var request = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: 'FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678' } };
         server.inject(request, function (res) {
             expect(res.statusCode).to.equal(200);
             expect(res.result).to.equal('success');
@@ -176,7 +176,7 @@ describe('Bearer', function () {
         var request = { method: 'GET', url: '/basic_validate_error', headers: { authorization: 'Bearer 12345678' } };
         server.inject(request, function (res) {
             expect(res.statusCode).to.equal(200);
-            expect(JSON.stringify(res.result)).to.equal("{\"Error\":\"Error\"}");
+            expect(JSON.stringify(res.result)).to.equal('{\"Error\":\"Error\"}');
             done();
         });
     });
@@ -185,7 +185,7 @@ describe('Bearer', function () {
         var request = { method: 'GET', url: '/boom_validate_error', headers: { authorization: 'Bearer 12345678' } };
         server.inject(request, function (res) {
             expect(res.statusCode).to.equal(500);
-            expect(JSON.stringify(res.result)).to.equal("{\"statusCode\":500,\"error\":\"Internal Server Error\",\"message\":\"An internal server error occurred\"}");
+            expect(JSON.stringify(res.result)).to.equal('{\"statusCode\":500,\"error\":\"Internal Server Error\",\"message\":\"An internal server error occurred\"}');
             done();
         });
     });
@@ -207,8 +207,8 @@ describe('Bearer', function () {
     });
 
     it('returns a 200 on successful auth with access_token query param renamed and set', function (done) {
-        var request_query_token = { method: 'GET', url: '/basic_named_token?my_access_token=12345678' };
-        server.inject(request_query_token, function (res) {
+        var requestQueryToken = { method: 'GET', url: '/basic_named_token?my_access_token=12345678' };
+        server.inject(requestQueryToken, function (res) {
             expect(res.statusCode).to.equal(200);
             expect(res.result).to.equal('success');
             done();
@@ -216,29 +216,29 @@ describe('Bearer', function () {
     });
 
     it('doesn\'t affect header auth and will return 200 and success when specifying custom access_token name', function (done) {
-        var request_header_token  = { method: 'GET', url: '/basic_named_token', headers: { authorization: 'Bearer 12345678' } };
-        server.inject(request_header_token, function(res) {
+        var requestQueryToken = { method: 'GET', url: '/basic_named_token', headers: { authorization: 'Bearer 12345678' } };
+        server.inject(requestQueryToken, function(res) {
             expect(res.statusCode).to.equal(200);
             expect(res.result).to.equal('success');
             done();
-        })
+        });
     });
 
     it('allows you to enable auth by query token', function (done) {
-        var request_header_token  = { method: 'GET', url: '/query_token_enabled?access_token=12345678'};
-        server.inject(request_header_token, function(res) {
+        var requestQueryToken = { method: 'GET', url: '/query_token_enabled?access_token=12345678'};
+        server.inject(requestQueryToken, function(res) {
             expect(res.statusCode).to.equal(200);
             expect(res.result).to.equal('success');
             done();
-        })
+        });
     });
 
     it('allows you to disable auth by query token', function (done) {
-        var request_header_token  = { method: 'GET', url: '/query_token_disabled?access_token=12345678'};
-        server.inject(request_header_token, function(res) {
+        var requestHeaderToken  = { method: 'GET', url: '/query_token_disabled?access_token=12345678'};
+        server.inject(requestHeaderToken, function(res) {
             expect(res.statusCode).to.equal(401);
             done();
-        })
+        });
     });
 
     it('disables multiple auth headers by default', function (done) {
@@ -246,48 +246,46 @@ describe('Bearer', function () {
         server.inject(request, function(res) {
             expect(res.statusCode).to.equal(401);
             done();
-        })
+        });
     });
 
     it('allows you to enable multiple auth headers', function (done) {
-        var request_header_token  = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: 'RandomAuthHeader 1234; Bearer 12345678' } };
-        server.inject(request_header_token, function(res) {
+        var requestHeaderToken = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: 'RandomAuthHeader 1234; Bearer 12345678' } };
+        server.inject(requestHeaderToken, function(res) {
             expect(res.statusCode).to.equal(200);
             done();
-        })
+        });
     });
 
     it('return unauthorized when no auth info and multiple headers disabled', function (done) {
-        var request_header_token  = { method: 'POST', url: '/basic', headers: { authorization: 'x' } };
-        server.inject(request_header_token, function(res) {
+        var requestHeaderToken = { method: 'POST', url: '/basic', headers: { authorization: 'x' } };
+        server.inject(requestHeaderToken, function(res) {
             expect(res.statusCode).to.equal(401);
             done();
-        })
+        });
     });
 
     it('return unauthorized when no auth info and multiple headers enabled', function (done) {
-        var request_header_token  = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: 'x' } };
-        server.inject(request_header_token, function(res) {
+        var requestHeaderToken = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: 'x' } };
+        server.inject(requestHeaderToken, function(res) {
             expect(res.statusCode).to.equal(401);
             done();
-        })
+        });
     });
 
     it('return unauthorized when different token type is used', function (done) {
-        var request_header_token  = { method: 'GET', url: '/custom_token_type', headers: { authorization: 'Bearer 12345678' } };
-        server.inject(request_header_token, function(res) {
+        var requestHeaderToken = { method: 'GET', url: '/custom_token_type', headers: { authorization: 'Bearer 12345678' } };
+        server.inject(requestHeaderToken, function(res) {
             expect(res.statusCode).to.equal(401);
             done();
-        })
+        });
     });
 
     it('return 200 when correct token type is used', function (done) {
-        var request_header_token  = { method: 'GET', url: '/custom_token_type', headers: { authorization: 'Basic 12345678' } };
-        server.inject(request_header_token, function(res) {
+        var requestHeaderToken  = { method: 'GET', url: '/custom_token_type', headers: { authorization: 'Basic 12345678' } };
+        server.inject(requestHeaderToken, function(res) {
             expect(res.statusCode).to.equal(200);
             done();
-        })
+        });
     });
-
-
 });
