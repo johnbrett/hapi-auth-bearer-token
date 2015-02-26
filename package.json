@@ -34,7 +34,7 @@
     "code": "1.x.x"
   },
   "scripts": {
-    "test": "node ./node_modules/lab/bin/lab -c"
+    "test": "node ./node_modules/lab/bin/lab -a code -c -L"
   },
   "bugs": {
     "url": "https://github.com/johnbrett/hapi-auth-bearer-token/issues"
