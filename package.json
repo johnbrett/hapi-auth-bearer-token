@@ -7,7 +7,7 @@
     "type": "git",
     "url": "git://github.com/johnbrett/hapi-auth-bearer-token"
   },
-  "main": "index",
+  "main": "lib/index.js",
   "keywords": [
     "hapi",
     "plugin",
@@ -29,12 +29,12 @@
     "hapi": ">=8.x.x"
   },
   "devDependencies": {
-    "hapi": "8.x.x",
+    "hapi": "9.x.x",
     "lab": "5.x.x",
     "code": "1.x.x"
   },
   "scripts": {
-    "test": "node ./node_modules/lab/bin/lab -a code -c -L"
+    "test": "lab -a code -c -L"
   },
   "bugs": {
     "url": "https://github.com/johnbrett/hapi-auth-bearer-token/issues"
