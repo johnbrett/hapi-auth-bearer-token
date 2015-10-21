@@ -29,7 +29,7 @@
     "hapi": ">=8.x.x"
   },
   "devDependencies": {
-    "hapi": "9.x.x",
+    "hapi": "11.0.2",
     "lab": "5.x.x",
     "code": "1.x.x"
   },
