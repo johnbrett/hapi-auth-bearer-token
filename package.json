@@ -22,7 +22,7 @@
     "node": ">=0.10.22"
   },
   "dependencies": {
-    "boom": "2.x.x",
+    "boom": "3.0.0",
     "hoek": "2.x.x"
   },
   "peerDependencies": {
