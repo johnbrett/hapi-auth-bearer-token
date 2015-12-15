@@ -9,7 +9,6 @@ const lab = exports.lab = Lab.script();
 const expect = Code.expect;
 const before = lab.before;
 const after = lab.after;
-const describe = lab.describe;
 const it = lab.it;
 
 
