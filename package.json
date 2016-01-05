@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "code": "2.x.x",
-    "hapi": "^11.1.2",
+    "hapi": "^12.0.0",
     "lab": "8.x.x"
   },
   "scripts": {
