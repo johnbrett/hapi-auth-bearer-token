@@ -30,8 +30,8 @@
   },
   "devDependencies": {
     "code": "2.x.x",
-    "hapi": "^11.1.2",
-    "lab": "8.x.x"
+    "hapi": "^13.0.0",
+    "lab": "^10.2.0"
   },
   "scripts": {
     "test": "lab -a code -t 100 -L",
