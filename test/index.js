@@ -94,7 +94,8 @@ before((done) => {
 
         server.auth.strategy('multiple_headers', 'bearer-access-token', {
             validateFunc: defaultValidateFunc,
-            allowMultipleHeaders: true
+            allowMultipleHeaders: true,
+            tokenType: 'TestToken'
         });
 
         server.auth.strategy('custom_token_type', 'bearer-access-token', {
@@ -143,7 +144,7 @@ it('returns 200 and success with correct bearer token header set', (done) => {
 
 it('returns 200 and success with correct bearer token header set in multiple authorization header', (done) => {
 
-    const request = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: 'Bearer 12345678; FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018' } };
+    const request = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: 'TestToken 12345678; FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018' } };
 
     server.inject(request, (res) => {
 
@@ -156,7 +157,7 @@ it('returns 200 and success with correct bearer token header set in multiple aut
 
 it('returns 200 and success with correct bearer token header set in multiple places of the authorization header', (done) => {
 
-    const request = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: 'FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678' } };
+    const request = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: 'FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; TestToken 12345678' } };
 
     server.inject(request, (res) => {
 
@@ -311,7 +312,7 @@ it('allows you to disable auth by query token', (done) => {
 
 it('disables multiple auth headers by default', (done) => {
 
-    const request = { method: 'POST', url: '/basic', headers: { authorization: 'RandomAuthHeader 1234; Bearer 12345678' } };
+    const request = { method: 'POST', url: '/basic', headers: { authorization: 'RandomAuthHeader 1234; TestToken 12345678' } };
     server.inject(request, (res) => {
 
         expect(res.statusCode).to.equal(401);
@@ -321,7 +322,7 @@ it('disables multiple auth headers by default', (done) => {
 
 it('allows you to enable multiple auth headers', (done) => {
 
-    const requestHeaderToken = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: 'RandomAuthHeader 1234; Bearer 12345678' } };
+    const requestHeaderToken = { method: 'GET', url: '/multiple_headers_enabled', headers: { authorization: 'RandomAuthHeader 1234; TestToken 12345678' } };
     server.inject(requestHeaderToken, (res) => {
 
         expect(res.statusCode).to.equal(200);
