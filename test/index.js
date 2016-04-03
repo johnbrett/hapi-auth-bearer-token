@@ -17,6 +17,11 @@ const defaultHandler = (request, reply) => {
     reply('success');
 };
 
+const setSessionHandler = (request, reply) => {
+
+    reply(200).state('session', { 'access_token': 12345678 });
+};
+
 
 const defaultValidateFunc = (token, callback) => {
 
@@ -48,8 +53,10 @@ const noCredentialValidateFunc = (token, callback) => {
 };
 
 let server = new Hapi.Server({ debug: false });
+
 server.connection();
 
+server.state('session');
 
 before((done) => {
 
@@ -103,6 +110,12 @@ before((done) => {
             tokenType: 'Basic'
         });
 
+        server.auth.strategy('session', 'bearer-access-token', {
+            validateFunc: defaultValidateFunc,
+            accessTokenName: 'access_token',
+            allowSessionSupport: true
+        });
+
         server.route([
             { method: 'POST', path: '/basic', handler: defaultHandler, config: { auth: 'default' } },
             { method: 'POST', path: '/basic_default_auth', handler: defaultHandler, config: { } },
@@ -114,7 +127,9 @@ before((done) => {
             { method: 'GET', path: '/query_token_disabled', handler: defaultHandler, config: { auth: 'query_token_disabled' } },
             { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, config: { auth: 'query_token_enabled' } },
             { method: 'GET', path: '/multiple_headers_enabled', handler: defaultHandler, config: { auth: 'multiple_headers' } },
-            { method: 'GET', path: '/custom_token_type', handler: defaultHandler, config: { auth: 'custom_token_type' } }
+            { method: 'GET', path: '/custom_token_type', handler: defaultHandler, config: { auth: 'custom_token_type' } },
+            { method: 'POST', path: '/set_session', handler: setSessionHandler, config: { auth: false } },
+            { method: 'GET', path: '/session', handler: defaultHandler, config: { auth: 'session' } }
         ]);
 
         done();
@@ -177,6 +192,25 @@ it('returns 200 and success with correct bearer token query param set', (done) =
         expect(res.statusCode).to.equal(200);
         expect(res.result).to.equal('success');
         done();
+    });
+});
+
+it('returns 200 and success with correct bearer token stored within the session', (done) => {
+
+    const request1 = { method: 'POST', url: '/set_session' };
+
+    server.inject(request1, (res) => {
+
+        expect(res.statusCode).to.equal(200);
+        const cookie = res.headers['set-cookie'].split[';'][0];
+        const request2 = { method: 'GET', url: '/session', headers: { Cookie: cookie } };
+        expect(cookie).not.equal.to(null);
+        server.inject(request2, (res2) => {
+
+            expect(res2.statusCode).to.equal(200);
+            expect(res2.result).to.equal('success');
+            done();
+        });
     });
 });
 
