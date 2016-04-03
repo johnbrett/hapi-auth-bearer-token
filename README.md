@@ -22,6 +22,7 @@ Bearer authentication requires validating a token passed in by either the bearer
     - `accessTokenName` (Default: 'access_token') - Rename the token query parameter key e.g. 'sample_token_name' would rename the token query parameter to /route1?sample_token_name=12345678.
     - `allowQueryToken` (Default: true) - Disable accepting token by query parameter, forcing token to be passed in through authorization header.
     - `allowMultipleHeaders` (Default: false) - Allow multiple authorization headers in request, e.g. `Authorization: FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678`
+    - `allowSessionSupport` (Default: false) - Allows your token-based api to support browser sessions. Simply add a token to your session at login. `response(200).state('session', {'access_token': token});` and set `accessTokenName` accordingly. `res(200).unstate('session');` at logout.
     - `tokenType` (Default: 'Bearer') - Allow custom token type, e.g. `Authorization: Basic 12345678`
 
 For convenience, the `request` object can be accessed from `this` within validateFunc. If you want to use this, you must use the `function` keyword instead of the arrow syntax. This allows some greater flexibility with authentication, such different authentication checks for different routes.
@@ -38,6 +39,7 @@ server.register(AuthBearer, (err) => {
     server.auth.strategy('simple', 'bearer-access-token', {
         allowQueryToken: true,              // optional, true by default
         allowMultipleHeaders: false,        // optional, false by default
+        allowSessionSupport: false,         // optional, false by default
         accessTokenName: 'access_token',    // optional, 'access_token' by default
         validateFunc: function (token, callback) {
 
@@ -75,6 +77,10 @@ server.start((err) => {
     }
     console.log('Server started at: ' + server.info.uri);
 })
+```
+
+```javascript
+
 ```
 
 License MIT @ John Brett 2014
