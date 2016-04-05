@@ -47,6 +47,11 @@ const noCredentialValidateFunc = (token, callback) => {
     return callback(null, true, null);
 };
 
+const artifactsValidateFunc = (token, callback) => {
+  
+    return callback(null, true, { token }, { sampleArtifact: 'artifact' });  
+};
+
 let server = new Hapi.Server({ debug: false });
 server.connection();
 
@@ -102,6 +107,10 @@ before((done) => {
             validateFunc: defaultValidateFunc,
             tokenType: 'Basic'
         });
+        
+        server.auth.strategy('artifact_test', 'bearer-access-token', {
+            validateFunc: artifactsValidateFunc
+        });
 
         server.route([
             { method: 'POST', path: '/basic', handler: defaultHandler, config: { auth: 'default' } },
@@ -114,7 +123,8 @@ before((done) => {
             { method: 'GET', path: '/query_token_disabled', handler: defaultHandler, config: { auth: 'query_token_disabled' } },
             { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, config: { auth: 'query_token_enabled' } },
             { method: 'GET', path: '/multiple_headers_enabled', handler: defaultHandler, config: { auth: 'multiple_headers' } },
-            { method: 'GET', path: '/custom_token_type', handler: defaultHandler, config: { auth: 'custom_token_type' } }
+            { method: 'GET', path: '/custom_token_type', handler: defaultHandler, config: { auth: 'custom_token_type' } },
+            { method: 'GET', path: '/artifacts', handler: artifactsValidateFunc, config: { auth: 'artifact_test' } }
         ]);
 
         done();
@@ -372,6 +382,19 @@ it('return 200 when correct token type is used', (done) => {
     server.inject(requestHeaderToken, (res) => {
 
         expect(res.statusCode).to.equal(200);
+        done();
+    });
+});
+
+
+it('accepts artifacts with credentials', (done) => {
+
+    const requestHeaderToken  = { method: 'GET', url: '/artifacts', headers: { authorization: 'Bearer 12345678' } };
+
+    server.inject(requestHeaderToken, (res) => {
+        
+        expect(res.statusCode).to.equal(200);
+        expect(res.request.auth.artifacts.sampleArtifact).equal('artifact');
         done();
     });
 });
