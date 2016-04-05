@@ -18,6 +18,7 @@ Bearer authentication requires validating a token passed in by either the bearer
         - `credentials` - a credentials object passed back to the application in `request.auth.credentials`. Typically, `credentials` are only
           included when `isValid` is `true`, but there are cases when the application needs to know who tried to authenticate even when it fails
           (e.g. with authentication mode `'try'`).
+        - `artifacts` - optional [authentication](http://hapijs.com/tutorials/auth) related data that is not part of the user's credential.
 - `options` - (optional)
     - `accessTokenName` (Default: 'access_token') - Rename the token query parameter key e.g. 'sample_token_name' would rename the token query parameter to /route1?sample_token_name=12345678.
     - `allowQueryToken` (Default: true) - Disable accepting token by query parameter, forcing token to be passed in through authorization header.
@@ -48,10 +49,10 @@ server.register(AuthBearer, (err) => {
             // Use a real strategy here,
             // comparing with a token from your database for example
             if (token === "1234") {
-                return callback(null, true, { token: token });
+                return callback(null, true, { token: token }, { artifact1: 'an artifact' });
             }
             
-            return callback(null, false, { token: token });
+            return callback(null, false, { token: token }, { artifact1: 'an artifact' });
         }
     });
 });
