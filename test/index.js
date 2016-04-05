@@ -48,8 +48,8 @@ const noCredentialValidateFunc = (token, callback) => {
 };
 
 const artifactsValidateFunc = (token, callback) => {
-  
-    return callback(null, true, { token }, { sampleArtifact: 'artifact' });  
+
+    return callback(null, true, { token }, { sampleArtifact: 'artifact' });
 };
 
 let server = new Hapi.Server({ debug: false });
@@ -107,7 +107,7 @@ before((done) => {
             validateFunc: defaultValidateFunc,
             tokenType: 'Basic'
         });
-        
+
         server.auth.strategy('artifact_test', 'bearer-access-token', {
             validateFunc: artifactsValidateFunc
         });
@@ -392,7 +392,7 @@ it('accepts artifacts with credentials', (done) => {
     const requestHeaderToken  = { method: 'GET', url: '/artifacts', headers: { authorization: 'Bearer 12345678' } };
 
     server.inject(requestHeaderToken, (res) => {
-        
+
         expect(res.statusCode).to.equal(200);
         expect(res.request.auth.artifacts.sampleArtifact).equal('artifact');
         done();
