@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "boom": "3.x.x",
-    "hoek": "3.x.x"
+    "hoek": "4.0.0"
   },
   "peerDependencies": {
     "hapi": ">=8.x.x"
