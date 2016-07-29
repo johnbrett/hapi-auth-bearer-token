@@ -23,13 +23,13 @@
   },
   "dependencies": {
     "boom": "3.x.x",
-    "hoek": "4.0.0"
+    "hoek": "4.0.2"
   },
   "peerDependencies": {
     "hapi": ">=8.x.x"
   },
   "devDependencies": {
-    "code": "3.0.0",
+    "code": "3.0.2",
     "hapi": "^13.1.0",
     "lab": "^10.2.0"
   },
