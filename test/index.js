@@ -72,7 +72,8 @@ before((done) => {
         });
 
         server.auth.strategy('always_reject', 'bearer-access-token', {
-            validateFunc: alwaysRejectValidateFunc
+            validateFunc: alwaysRejectValidateFunc,
+            allowChaining: true
         });
 
         server.auth.strategy('with_error_strategy', 'bearer-access-token', {
@@ -260,7 +261,10 @@ it('returns 401 handles when isValid false passed to validateFunc', (done) => {
         expect(res.result).to.equal({
             statusCode: 401,
             error: 'Unauthorized',
-            message: 'Missing authentication'
+            message: 'Bad token',
+            attributes: {
+                error: 'Bad token'
+            }
         });
         expect(res.statusCode).to.equal(401);
         done();
