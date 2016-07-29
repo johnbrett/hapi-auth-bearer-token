@@ -124,7 +124,8 @@ before((done) => {
             { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, config: { auth: 'query_token_enabled' } },
             { method: 'GET', path: '/multiple_headers_enabled', handler: defaultHandler, config: { auth: 'multiple_headers' } },
             { method: 'GET', path: '/custom_token_type', handler: defaultHandler, config: { auth: 'custom_token_type' } },
-            { method: 'GET', path: '/artifacts', handler: artifactsValidateFunc, config: { auth: 'artifact_test' } }
+            { method: 'GET', path: '/artifacts', handler: artifactsValidateFunc, config: { auth: 'artifact_test' } },
+            { method: 'GET', path: '/chain', handler: defaultHandler, config: { auth: { strategies: ['always_reject', 'default'] } } }
         ]);
 
         done();
@@ -256,6 +257,11 @@ it('returns 401 handles when isValid false passed to validateFunc', (done) => {
     const request = { method: 'GET', url: '/always_reject', headers: { authorization: 'Bearer 12345678' } };
     server.inject(request, (res) => {
 
+        expect(res.result).to.equal({
+            statusCode: 401,
+            error: 'Unauthorized',
+            message: 'Missing authentication'
+        });
         expect(res.statusCode).to.equal(401);
         done();
     });
@@ -395,6 +401,17 @@ it('accepts artifacts with credentials', (done) => {
 
         expect(res.statusCode).to.equal(200);
         expect(res.request.auth.artifacts.sampleArtifact).equal('artifact');
+        done();
+    });
+});
+
+it('allows chaining of strategies', (done) => {
+
+    const requestHeaderToken  = { method: 'GET', url: '/chain', headers: { authorization: 'Bearer 12345678' } };
+
+    server.inject(requestHeaderToken, (res) => {
+
+        expect(res.statusCode).to.equal(200);
         done();
     });
 });
