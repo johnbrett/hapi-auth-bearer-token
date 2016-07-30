@@ -72,8 +72,7 @@ before((done) => {
         });
 
         server.auth.strategy('always_reject', 'bearer-access-token', {
-            validateFunc: alwaysRejectValidateFunc,
-            allowChaining: true
+            validateFunc: alwaysRejectValidateFunc
         });
 
         server.auth.strategy('with_error_strategy', 'bearer-access-token', {
@@ -113,6 +112,11 @@ before((done) => {
             validateFunc: artifactsValidateFunc
         });
 
+        server.auth.strategy('reject_with_chain', 'bearer-access-token', {
+            validateFunc: alwaysRejectValidateFunc,
+            allowChaining: true
+        });
+
         server.route([
             { method: 'POST', path: '/basic', handler: defaultHandler, config: { auth: 'default' } },
             { method: 'POST', path: '/basic_default_auth', handler: defaultHandler, config: { } },
@@ -126,7 +130,7 @@ before((done) => {
             { method: 'GET', path: '/multiple_headers_enabled', handler: defaultHandler, config: { auth: 'multiple_headers' } },
             { method: 'GET', path: '/custom_token_type', handler: defaultHandler, config: { auth: 'custom_token_type' } },
             { method: 'GET', path: '/artifacts', handler: artifactsValidateFunc, config: { auth: 'artifact_test' } },
-            { method: 'GET', path: '/chain', handler: defaultHandler, config: { auth: { strategies: ['always_reject', 'default'] } } }
+            { method: 'GET', path: '/chain', handler: defaultHandler, config: { auth: { strategies: ['reject_with_chain', 'default'] } } }
         ]);
 
         done();
