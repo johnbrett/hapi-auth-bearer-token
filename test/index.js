@@ -20,13 +20,13 @@ const defaultHandler = (request, reply) => {
 
 const defaultValidateFunc = (token, callback) => {
 
-    return callback(null, token === '12345678',  { token: token });
+    return callback(null, token === '12345678',  { token });
 };
 
 
 const alwaysRejectValidateFunc = (token, callback) => {
 
-    return callback(null, false, { token: token });
+    return callback(null, false, { token });
 };
 
 
