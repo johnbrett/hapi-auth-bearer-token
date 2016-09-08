@@ -20,8 +20,9 @@ Bearer authentication requires validating a token passed in by either the bearer
           (e.g. with authentication mode `'try'`).
         - `artifacts` - optional [authentication](http://hapijs.com/tutorials/auth) related data that is not part of the user's credential.
 - `options` - (optional)
-    - `accessTokenName` (Default: 'access_token') - Rename the token query parameter key e.g. 'sample_token_name' would rename the token query parameter to /route1?sample_token_name=12345678.
-    - `allowQueryToken` (Default: true) - Disable accepting token by query parameter, forcing token to be passed in through authorization header.
+    - `accessTokenName` (Default: 'access_token') - Rename the token query/cookie parameter key e.g. 'sample_token_name' would rename the token query parameter to /route1?sample_token_name=12345678.
+    - `allowQueryToken` (Default: true) - Disable accepting token by query parameter, forcing token to be passed in through authorization header or cookie.
+    - `allowCookieToken` (Default: true) - Disable accepting token by cookie parameter, forcing token to be passed in through authorization header or query parameter.
     - `allowMultipleHeaders` (Default: false) - Allow multiple authorization headers in request, e.g. `Authorization: FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678`
     - `tokenType` (Default: 'Bearer') - Allow custom token type, e.g. `Authorization: Basic 12345678`
     - `allowChaining` (Default: false) - Allow attempt of additonal authentication strategies 
