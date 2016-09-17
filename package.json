@@ -22,7 +22,7 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "boom": "3.x.x",
+    "boom": "4.x.x",
     "hoek": "4.0.2"
   },
   "peerDependencies": {
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "code": "3.0.2",
-    "hapi": "^14.2.0",
+    "hapi": "^15.0.0",
     "lab": "^11.0.0"
   },
   "scripts": {
