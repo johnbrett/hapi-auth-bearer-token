@@ -1,8 +1,8 @@
 {
   "name": "hapi-auth-bearer-token",
-  "description": "Simple Bearer authentication scheme plugin for hapi, accepts token by Header or Query parameter.",
+  "description": "Simple Bearer authentication scheme plugin for hapi, accepts token by Header, Cookie or Query parameter.",
   "version": "4.2.1",
-  "author": "John Brett <johnbrett7@gmail.com> (http://blog.johnbrett.me)",
+  "author": "John Brett <johnbrett7@gmail.com> (https://johnbrett.me)",
   "repository": {
     "type": "git",
     "url": "git://github.com/johnbrett/hapi-auth-bearer-token"
@@ -14,8 +14,8 @@
     "auth",
     "scheme",
     "bearer",
-    "access",
     "token",
+    "cookie",
     "authentication"
   ],
   "engines": {

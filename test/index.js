@@ -97,6 +97,16 @@ before((done) => {
             allowQueryToken: false
         });
 
+        server.auth.strategy('cookie_token_disabled', 'bearer-access-token', {
+            validateFunc: defaultValidateFunc,
+            allowCookieToken: false
+        });
+
+        server.auth.strategy('cookie_token_enabled', 'bearer-access-token', {
+            validateFunc: defaultValidateFunc,
+            allowCookieToken: true
+        });
+
         server.auth.strategy('multiple_headers', 'bearer-access-token', {
             validateFunc: defaultValidateFunc,
             allowMultipleHeaders: true,
@@ -127,6 +137,8 @@ before((done) => {
             { method: 'GET', path: '/no_credentials', handler: defaultHandler, config: { auth: 'no_credentials' } },
             { method: 'GET', path: '/query_token_disabled', handler: defaultHandler, config: { auth: 'query_token_disabled' } },
             { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, config: { auth: 'query_token_enabled' } },
+            { method: 'GET', path: '/cookie_token_disabled', handler: defaultHandler, config: { auth: 'cookie_token_disabled' } },
+            { method: 'GET', path: '/cookie_token_enabled', handler: defaultHandler, config: { auth: 'cookie_token_enabled' } },
             { method: 'GET', path: '/multiple_headers_enabled', handler: defaultHandler, config: { auth: 'multiple_headers' } },
             { method: 'GET', path: '/custom_token_type', handler: defaultHandler, config: { auth: 'custom_token_type' } },
             { method: 'GET', path: '/artifacts', handler: artifactsValidateFunc, config: { auth: 'artifact_test' } },
@@ -420,6 +432,54 @@ it('allows chaining of strategies', (done) => {
     server.inject(requestHeaderToken, (res) => {
 
         expect(res.statusCode).to.equal(200);
+        done();
+    });
+});
+
+it('does not allow an auth cookie by default', (done) => {
+
+    const cookie = 'my_access_token=12345678';
+    const requestCookieToken = { method: 'GET', url: '/basic_named_token', headers: { cookie } };
+
+    server.inject(requestCookieToken, (res) => {
+
+        expect(res.statusCode).to.equal(401);
+        done();
+    });
+});
+
+it('allows you to enable auth by cookie token', (done) => {
+
+    const cookie = 'access_token=12345678';
+    const requestCookieToken = { method: 'GET', url: '/cookie_token_enabled', headers: { cookie }  };
+    server.inject(requestCookieToken, (res) => {
+
+        expect(res.statusCode).to.equal(200);
+        expect(res.result).to.equal('success');
+        done();
+    });
+});
+
+it('will ignore cookie value if header auth provided', (done) => {
+
+    const cookie = 'my_access_token=12345678';
+    const authorization = 'Bearer 12345678';
+    const requestCookieToken = { method: 'GET', url: '/cookie_token_enabled', headers: { authorization, cookie } };
+
+    server.inject(requestCookieToken, (res) => {
+
+        expect(res.statusCode).to.equal(200);
+        done();
+    });
+});
+
+it('allows you to disable auth by cookie token', (done) => {
+
+    const cookie = 'access_token=12345678';
+    const requestCookieToken  = { method: 'GET', url: '/cookie_token_disabled', headers: { cookie }  };
+    server.inject(requestCookieToken, (res) => {
+
+        expect(res.statusCode).to.equal(401);
         done();
     });
 });
