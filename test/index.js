@@ -436,15 +436,14 @@ it('allows chaining of strategies', (done) => {
     });
 });
 
-it('returns a 200 on successful with an auth cookie', (done) => {
+it('does not allow an auth cookie by default', (done) => {
 
     const cookie = 'my_access_token=12345678';
     const requestCookieToken = { method: 'GET', url: '/basic_named_token', headers: { cookie } };
 
     server.inject(requestCookieToken, (res) => {
 
-        expect(res.statusCode).to.equal(200);
-        expect(res.result).to.equal('success');
+        expect(res.statusCode).to.equal(401);
         done();
     });
 });
@@ -461,6 +460,18 @@ it('allows you to enable auth by cookie token', (done) => {
     });
 });
 
+it('will ignore cookie value if header auth provided', (done) => {
+
+    const cookie = 'my_access_token=12345678';
+    const authorization = 'Bearer 12345678';
+    const requestCookieToken = { method: 'GET', url: '/cookie_token_enabled', headers: { authorization, cookie } };
+
+    server.inject(requestCookieToken, (res) => {
+
+        expect(res.statusCode).to.equal(200);
+        done();
+    });
+});
 
 it('allows you to disable auth by cookie token', (done) => {
 
