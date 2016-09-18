@@ -129,7 +129,7 @@ before((done) => {
             { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, config: { auth: 'query_token_enabled' } },
             { method: 'GET', path: '/multiple_headers_enabled', handler: defaultHandler, config: { auth: 'multiple_headers' } },
             { method: 'GET', path: '/custom_token_type', handler: defaultHandler, config: { auth: 'custom_token_type' } },
-            { method: 'GET', path: '/artifacts', handler: artifactsValidateFunc, config: { auth: 'artifact_test' } },
+            { method: 'GET', path: '/artifacts', handler: defaultHandler, config: { auth: 'artifact_test' } },
             { method: 'GET', path: '/chain', handler: defaultHandler, config: { auth: { strategies: ['reject_with_chain', 'default'] } } }
         ]);
 
