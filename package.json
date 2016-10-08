@@ -22,9 +22,9 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "boom": "4.x.x",
-    "hoek": "4.1.0",
-    "joi": "9.1.0"
+    "boom": "^4.1.0",
+    "hoek": "^4.1.0",
+    "joi": "^9.1.0"
   },
   "peerDependencies": {
     "hapi": ">=8.x.x"
