@@ -156,6 +156,27 @@ after((done) => {
     done();
 });
 
+it('throws when no bearer options provided', (done) => {
+
+    try {
+        server.auth.strategy('no_options', 'bearer-access-token', true);
+    }
+    catch (e) {
+        expect(e.message).to.equal('Missing bearer auth strategy options');
+        done();
+    }
+});
+
+it('throws when validateFunc is not provided', (done) => {
+
+    try {
+        server.auth.strategy('no_options', 'bearer-access-token', true, { validateFunc: 'string' });
+    }
+    catch (e) {
+        expect(e.details[0].message).to.equal('"validateFunc" must be a Function');
+        done();
+    }
+});
 
 it('returns 200 and success with correct bearer token header set', (done) => {
 
