@@ -57,27 +57,27 @@ server.register(AuthBearer, (err) => {
             return callback(null, false, { token: token }, { artifact1: 'an artifact' });
         }
     });
+    
+    server.route({
+        method: 'GET',
+        path: '/',
+        config: {
+           auth: 'simple',
+           handler: function (request, reply) {
+
+              return reply('success');
+           }
+        }
+    });
+
+    server.start((err) => {
+
+        if (err) {
+          throw err;
+        }
+        console.log('Server started at: ' + server.info.uri);
+    })
 });
-
-server.route({
-    method: 'GET',
-    path: '/',
-    config: {
-       auth: 'simple',
-       handler: function (request, reply) {
-
-          return reply('success');
-       }
-    }
-});
-
-server.start((err) => {
-
-    if (err) {
-      throw err;
-    }
-    console.log('Server started at: ' + server.info.uri);
-})
 ```
 
-License MIT @ John Brett 2014
+License MIT @ John Brett and other contributors 2016
