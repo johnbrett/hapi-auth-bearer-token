@@ -12,7 +12,7 @@ Bearer authentication requires validating a token passed in by either the bearer
 
 - `validateFunc` - (required) a token lookup and validation function with the signature `function(token, callback)` where:
     - `token` - the auth token received from the client.
-    - `callback` - a callback function with the signature `function(err, isValid, credentials)` where:
+    - `callback` - a callback function with the signature `function(err, isValid, credentials, artifacts)` where:
         - `err` - an internal error.
         - `isValid` - `true` if both the username was found and the password matched, otherwise `false`.
         - `credentials` - a credentials object passed back to the application in `request.auth.credentials`. Typically, `credentials` are only
@@ -22,10 +22,10 @@ Bearer authentication requires validating a token passed in by either the bearer
 - `options` - (optional)
     - `accessTokenName` (Default: 'access_token') - Rename the token query/cookie parameter key e.g. 'sample_token_name' would rename the token query parameter to /route1?sample_token_name=12345678.
     - `allowQueryToken` (Default: true) - Disable accepting token by query parameter, meaning query parameter will not be checked for the authorization token.
-    - `allowCookieToken` (Default: false) - Allow accepting token by cookie parameter, meaning cookies will be checked for authoization token as well as via other methods.
+    - `allowCookieToken` (Default: false) - Allow accepting token by cookie parameter, meaning cookies will be checked for authorization token as well as via other methods.
     - `allowMultipleHeaders` (Default: false) - Allow multiple authorization headers in request, e.g. `Authorization: FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678`.
     - `tokenType` (Default: 'Bearer') - Allow custom token type, e.g. `Authorization: Basic 12345678`.
-    - `allowChaining` (Default: false) - Allow attempt of additonal authentication strategies.
+    - `allowChaining` (Default: false) - Allow attempt of additional authentication strategies.
 
 For convenience, the `request` object can be accessed from `this` within validateFunc. If you want to use this, you must use the `function` keyword instead of the arrow syntax. This allows some greater flexibility with authentication, such different authentication checks for different routes.
 
@@ -57,7 +57,7 @@ server.register(AuthBearer, (err) => {
             return callback(null, false, { token: token }, { artifact1: 'an artifact' });
         }
     });
-    
+
     server.route({
         method: 'GET',
         path: '/',
