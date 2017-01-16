@@ -92,6 +92,12 @@ before((done) => {
             allowQueryToken: true
         });
 
+        server.auth.strategy('query_token_enabled_renamed', 'bearer-access-token', {
+            validateFunc: defaultValidateFunc,
+            allowQueryToken: true,
+            accessTokenName: 'my_access_token'
+        });
+
         server.auth.strategy('query_token_disabled', 'bearer-access-token', {
             validateFunc: defaultValidateFunc,
             allowQueryToken: false
@@ -137,6 +143,7 @@ before((done) => {
             { method: 'GET', path: '/no_credentials', handler: defaultHandler, config: { auth: 'no_credentials' } },
             { method: 'GET', path: '/query_token_disabled', handler: defaultHandler, config: { auth: 'query_token_disabled' } },
             { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, config: { auth: 'query_token_enabled' } },
+            { method: 'GET', path: '/query_token_enabled_renamed', handler: defaultHandler, config: { auth: 'query_token_enabled_renamed' } },
             { method: 'GET', path: '/cookie_token_disabled', handler: defaultHandler, config: { auth: 'cookie_token_disabled' } },
             { method: 'GET', path: '/cookie_token_enabled', handler: defaultHandler, config: { auth: 'cookie_token_enabled' } },
             { method: 'GET', path: '/multiple_headers_enabled', handler: defaultHandler, config: { auth: 'multiple_headers' } },
@@ -217,14 +224,13 @@ it('returns 200 and success with correct bearer token header set in multiple pla
 });
 
 
-it('returns 200 and success with correct bearer token query param set', (done) => {
+it('returns 401 error with bearer token query param set by default', (done) => {
 
     const request = { method: 'POST', url: '/basic?access_token=12345678' };
 
     server.inject(request, (res) => {
 
-        expect(res.statusCode).to.equal(200);
-        expect(res.result).to.equal('success');
+        expect(res.statusCode).to.equal(401);
         done();
     });
 });
@@ -320,13 +326,12 @@ it('returns 500 when no credentials passed to validateFunc', (done) => {
 });
 
 
-it('returns a 200 on successful auth with access_token query param renamed and set', (done) => {
+it('returns a 401 on default auth with access_token query param renamed and set', (done) => {
 
     const requestQueryToken = { method: 'GET', url: '/basic_named_token?my_access_token=12345678' };
     server.inject(requestQueryToken, (res) => {
 
-        expect(res.statusCode).to.equal(200);
-        expect(res.result).to.equal('success');
+        expect(res.statusCode).to.equal(401);
         done();
     });
 });
@@ -347,6 +352,28 @@ it('doesn\'t affect header auth and will return 200 and success when specifying 
 it('allows you to enable auth by query token', (done) => {
 
     const requestQueryToken = { method: 'GET', url: '/query_token_enabled?access_token=12345678' };
+    server.inject(requestQueryToken, (res) => {
+
+        expect(res.statusCode).to.equal(200);
+        expect(res.result).to.equal('success');
+        done();
+    });
+});
+
+it('allows you to enable auth by query token and rename the query param', (done) => {
+
+    const requestQueryToken = { method: 'GET', url: '/query_token_enabled_renamed?my_access_token=12345678' };
+    server.inject(requestQueryToken, (res) => {
+
+        expect(res.statusCode).to.equal(200);
+        expect(res.result).to.equal('success');
+        done();
+    });
+});
+
+it('allows you to enable auth by query token and still use header', (done) => {
+
+    const requestQueryToken = { method: 'GET', url: '/query_token_enabled_renamed', headers: { authorization: 'Bearer 12345678' } };
     server.inject(requestQueryToken, (res) => {
 
         expect(res.statusCode).to.equal(200);
