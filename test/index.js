@@ -260,6 +260,18 @@ it('returns 401 when bearer authorization header is not set', (done) => {
 });
 
 
+it('returns 401 when the bearer authorization header doesn\'t contain any token', (done) => {
+
+    const request = { method: 'POST', url: '/basic', headers: { authorization: 'Bearer    ' } };
+
+    server.inject(request, (res) => {
+
+        expect(res.statusCode).to.equal(401);
+        done();
+    });
+});
+
+
 it('returns 401 error with bearer token type of object (invalid token)', (done) => {
 
     const request = { method: 'POST', url: '/basic', headers: { authorization: 'Bearer {test: 1}' } };
