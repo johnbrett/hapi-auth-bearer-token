@@ -27,7 +27,7 @@
     "joi": "^10.0.0"
   },
   "peerDependencies": {
-    "hapi": ">=8.x.x"
+    "hapi": ">=10.5.0"
   },
   "devDependencies": {
     "code": "^4.0.0",
