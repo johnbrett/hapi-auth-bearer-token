@@ -133,6 +133,12 @@ before((done) => {
             allowChaining: true
         });
 
+        server.auth.strategy('custom_unauthorized_func', 'bearer-access-token', {
+            validateFunc: alwaysRejectValidateFunc,
+            unauthorizedFunc: (message, schema, attributed) => Boom.notFound(),
+            allowChaining: true
+        });
+
         server.route([
             { method: 'POST', path: '/basic', handler: defaultHandler, config: { auth: 'default' } },
             { method: 'POST', path: '/basic_default_auth', handler: defaultHandler, config: { } },
@@ -148,6 +154,7 @@ before((done) => {
             { method: 'GET', path: '/cookie_token_enabled', handler: defaultHandler, config: { auth: 'cookie_token_enabled' } },
             { method: 'GET', path: '/multiple_headers_enabled', handler: defaultHandler, config: { auth: 'multiple_headers' } },
             { method: 'GET', path: '/custom_token_type', handler: defaultHandler, config: { auth: 'custom_token_type' } },
+            { method: 'GET', path: '/custom_unauthorized_func', handler: defaultHandler, config: { auth: 'custom_unauthorized_func' } },
             { method: 'GET', path: '/artifacts', handler: defaultHandler, config: { auth: 'artifact_test' } },
             { method: 'GET', path: '/chain', handler: defaultHandler, config: { auth: { strategies: ['reject_with_chain', 'default'] } } }
         ]);
@@ -531,3 +538,18 @@ it('allows you to disable auth by cookie token', (done) => {
         done();
     });
 });
+
+it('allows you to use a custom unauthrozied function', (done) => {
+
+    const request = {
+        method: 'GET', url: '/custom_unauthorized_func',
+        headers: { authorization: 'definitelynotacorrecttoken' }
+    };
+
+    server.inject(request, (res) => {
+
+        expect(res.statusCode).to.equal(404);
+        done();
+    });
+});
+
