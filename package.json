@@ -22,7 +22,7 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "boom": "^4.1.0",
+    "boom": "^5.1.0",
     "hoek": "^4.1.0",
     "joi": "^10.0.0"
   },
@@ -32,7 +32,7 @@
   "devDependencies": {
     "code": "^4.0.0",
     "hapi": "^16.0.0",
-    "lab": "^12.0.0"
+    "lab": "^14.1.0"
   },
   "scripts": {
     "test": "lab -a code -t 100 -L",
