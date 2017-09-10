@@ -1,4 +1,5 @@
 # hapi auth bearer token
+
 [![NPM Version](https://img.shields.io/npm/v/hapi-auth-bearer-token.svg)](https://npmjs.org/package/hapi-auth-bearer-token)
 [![Build Status](https://travis-ci.org/johnbrett/hapi-auth-bearer-token.svg?branch=master)](https://travis-ci.org/johnbrett/hapi-auth-bearer-token)
 [![Dependency Status](https://david-dm.org/johnbrett/hapi-auth-bearer-token.svg)](https://david-dm.org/johnbrett/hapi-auth-bearer-token)
@@ -26,6 +27,7 @@ Bearer authentication requires validating a token passed in by either the bearer
     - `allowMultipleHeaders` (Default: false) - Allow multiple authorization headers in request, e.g. `Authorization: FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678`.
     - `tokenType` (Default: 'Bearer') - Allow custom token type, e.g. `Authorization: Basic 12345678`.
     - `allowChaining` (Default: false) - Allow attempt of additional authentication strategies.
+    - `unauthorizedFunc` (Default: Boom.unauthorized) - A function to call when unauthorized with signature `function([message], [scheme], [attributes])`. [More details](https://github.com/hapijs/boom#boomunauthorizedmessage-scheme-attributes)
 
 For convenience, the `request` object can be accessed from `this` within validateFunc. If you want to use this, you must use the `function` keyword instead of the arrow syntax. This allows some greater flexibility with authentication, such different authentication checks for different routes.
 

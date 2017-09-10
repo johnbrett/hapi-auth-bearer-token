@@ -5,3 +5,5 @@ node_modules
 
 npm-debug.log
 coverage.html
+
+.vscode/settings.json

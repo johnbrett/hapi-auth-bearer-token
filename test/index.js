@@ -137,6 +137,14 @@ describe('default single strategy', () => {
                 allowChaining: true
             });
 
+
+            server.auth.strategy('custom_unauthorized_func', 'bearer-access-token', {
+                validateFunc: alwaysRejectValidateFunc,
+                unauthorizedFunc: (message, schema, attributed) => Boom.notFound(),
+                allowChaining: true
+            });
+
+
             server.route([
                 { method: 'POST', path: '/basic', handler: defaultHandler, config: { auth: 'default' } },
                 { method: 'POST', path: '/basic_default_auth', handler: defaultHandler, config: { } },
@@ -152,6 +160,7 @@ describe('default single strategy', () => {
                 { method: 'GET', path: '/cookie_token_enabled', handler: defaultHandler, config: { auth: 'cookie_token_enabled' } },
                 { method: 'GET', path: '/multiple_headers_enabled', handler: defaultHandler, config: { auth: 'multiple_headers' } },
                 { method: 'GET', path: '/custom_token_type', handler: defaultHandler, config: { auth: 'custom_token_type' } },
+                { method: 'GET', path: '/custom_unauthorized_func', handler: defaultHandler, config: { auth: 'custom_unauthorized_func' } },
                 { method: 'GET', path: '/artifacts', handler: defaultHandler, config: { auth: 'artifact_test' } },
                 { method: 'GET', path: '/chain', handler: defaultHandler, config: { auth: { strategies: ['reject_with_chain', 'default'] } } },
                 { method: 'GET', path: '/chain_single_strategy', handler: defaultHandler, config: { auth: 'reject_with_chain' } }
@@ -561,12 +570,6 @@ describe('default chain of strategies', () => {
         });
     });
 
-    after((done) => {
-
-        server = null;
-        done();
-    });
-
     it('return 200 with a chain of strategies', (done) => {
 
         const requestHeaderToken  = { method: 'GET', url: '/chain', headers: { authorization: 'Bearer 12345678' } };
@@ -577,4 +580,25 @@ describe('default chain of strategies', () => {
             done();
         });
     });
+
+    it('allows you to use a custom unauthorized function', (done) => {
+
+        const request = {
+            method: 'GET', url: '/custom_unauthorized_func',
+            headers: { authorization: 'definitelynotacorrecttoken' }
+        };
+
+        server.inject(request, (res) => {
+
+            expect(res.statusCode).to.equal(404);
+            done();
+        });
+    });
+
+    after((done) => {
+
+        server = null;
+        done();
+    });
 });
+
