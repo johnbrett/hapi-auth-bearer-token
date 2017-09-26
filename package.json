@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "boom": "^5.1.0",
-    "hoek": "^4.1.0",
+    "hoek": "^5.0.0",
     "joi": "^10.0.0"
   },
   "peerDependencies": {
