@@ -22,17 +22,17 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "boom": "^5.1.0",
-    "hoek": "^4.1.0",
-    "joi": "^10.0.0"
+    "boom": "^7.1.1",
+    "hoek": "^5.0.2",
+    "joi": "^13.0.1"
   },
   "peerDependencies": {
     "hapi": ">=8.x.x"
   },
   "devDependencies": {
-    "code": "^4.0.0",
-    "hapi": "^16.0.0",
-    "lab": "^14.1.0"
+    "code": "^5.1.2",
+    "hapi": "^17.0.1",
+    "lab": "^15.1.2"
   },
   "scripts": {
     "test": "lab -a code -t 100 -L",

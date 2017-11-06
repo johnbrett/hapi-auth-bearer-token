@@ -12,196 +12,207 @@ const after = lab.after;
 const it = lab.it;
 
 
-const defaultHandler = (request, reply) => {
+const defaultHandler = (request, h) => {
 
-    reply('success');
+    return 'success';
 };
 
 
-const defaultValidateFunc = (token, callback) => {
+const defaultValidateFunc = (token) => {
 
-    return callback(null, token === '12345678',  { token });
+    return {
+        isValid: token === '12345678',
+        credentials: { token }
+    };
 };
 
 
-const alwaysRejectValidateFunc = (token, callback) => {
+const alwaysRejectValidateFunc = (token) => {
 
-    return callback(null, false, { token });
+    return {
+        isValid: false,
+        credentials: { token }
+    };
 };
 
 
-const alwaysErrorValidateFunc = (token, callback) => {
+const alwaysErrorValidateFunc = (token) => {
 
-    return callback({ Error:'Error' }, false, null);
+    throw new Error('Error');
 };
 
 
-const boomErrorValidateFunc = (token, callback) => {
+const boomErrorValidateFunc = (token) => {
 
-    return callback(Boom.badImplementation('test info'), false, null);
+    throw Boom.badImplementation('test info');
 };
 
 
 const noCredentialValidateFunc = (token, callback) => {
 
-    return callback(null, true, null);
+    return {
+        isValid: true,
+        credentials: null
+    };
 };
 
 const artifactsValidateFunc = (token, callback) => {
 
-    return callback(null, true, { token }, { sampleArtifact: 'artifact' });
+    return {
+        isValid: true,
+        credentials: { token },
+        artifacts: {
+            sampleArtifact: 'artifact'
+        }
+    };
 };
 
-let server = new Hapi.Server({ debug: false });
-server.connection();
+let server = Hapi.server({ debug: false });
 
-
-before((done) => {
-
-    server.register(require('../'), (err) => {
-
-        expect(err).to.not.exist();
-
-        server.auth.strategy('default', 'bearer-access-token', true, {
-            validateFunc: defaultValidateFunc
-        });
-
-        server.auth.strategy('default_named_access_token', 'bearer-access-token', {
-            validateFunc: defaultValidateFunc,
-            accessTokenName: 'my_access_token'
-        });
-
-        server.auth.strategy('always_reject', 'bearer-access-token', {
-            validateFunc: alwaysRejectValidateFunc
-        });
-
-        server.auth.strategy('with_error_strategy', 'bearer-access-token', {
-            validateFunc: alwaysErrorValidateFunc
-        });
-
-        server.auth.strategy('boom_error_strategy', 'bearer-access-token', {
-            validateFunc: boomErrorValidateFunc
-        });
-
-        server.auth.strategy('no_credentials', 'bearer-access-token', {
-            validateFunc: noCredentialValidateFunc
-        });
-
-        server.auth.strategy('query_token_enabled', 'bearer-access-token', {
-            validateFunc: defaultValidateFunc,
-            allowQueryToken: true
-        });
-
-        server.auth.strategy('query_token_enabled_renamed', 'bearer-access-token', {
-            validateFunc: defaultValidateFunc,
-            allowQueryToken: true,
-            accessTokenName: 'my_access_token'
-        });
-
-        server.auth.strategy('query_token_disabled', 'bearer-access-token', {
-            validateFunc: defaultValidateFunc,
-            allowQueryToken: false
-        });
-
-        server.auth.strategy('cookie_token_disabled', 'bearer-access-token', {
-            validateFunc: defaultValidateFunc,
-            allowCookieToken: false
-        });
-
-        server.auth.strategy('cookie_token_enabled', 'bearer-access-token', {
-            validateFunc: defaultValidateFunc,
-            allowCookieToken: true
-        });
-
-        server.auth.strategy('multiple_headers', 'bearer-access-token', {
-            validateFunc: defaultValidateFunc,
-            allowMultipleHeaders: true,
-            tokenType: 'TestToken'
-        });
-
-        server.auth.strategy('custom_token_type', 'bearer-access-token', {
-            validateFunc: defaultValidateFunc,
-            tokenType: 'Basic'
-        });
-
-        server.auth.strategy('artifact_test', 'bearer-access-token', {
-            validateFunc: artifactsValidateFunc
-        });
-
-        server.auth.strategy('reject_with_chain', 'bearer-access-token', {
-            validateFunc: alwaysRejectValidateFunc,
-            allowChaining: true
-        });
-
-        server.auth.strategy('custom_unauthorized_func', 'bearer-access-token', {
-            validateFunc: alwaysRejectValidateFunc,
-            unauthorizedFunc: (message, schema, attributed) => Boom.notFound(),
-            allowChaining: true
-        });
-
-        server.route([
-            { method: 'POST', path: '/basic', handler: defaultHandler, config: { auth: 'default' } },
-            { method: 'POST', path: '/basic_default_auth', handler: defaultHandler, config: { } },
-            { method: 'GET', path: '/basic_named_token', handler: defaultHandler, config: { auth: 'default_named_access_token' } },
-            { method: 'GET', path: '/basic_validate_error', handler: defaultHandler, config: { auth: 'with_error_strategy' } },
-            { method: 'GET', path: '/boom_validate_error', handler: defaultHandler, config: { auth: 'boom_error_strategy' } },
-            { method: 'GET', path: '/always_reject', handler: defaultHandler, config: { auth: 'always_reject' } },
-            { method: 'GET', path: '/no_credentials', handler: defaultHandler, config: { auth: 'no_credentials' } },
-            { method: 'GET', path: '/query_token_disabled', handler: defaultHandler, config: { auth: 'query_token_disabled' } },
-            { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, config: { auth: 'query_token_enabled' } },
-            { method: 'GET', path: '/query_token_enabled_renamed', handler: defaultHandler, config: { auth: 'query_token_enabled_renamed' } },
-            { method: 'GET', path: '/cookie_token_disabled', handler: defaultHandler, config: { auth: 'cookie_token_disabled' } },
-            { method: 'GET', path: '/cookie_token_enabled', handler: defaultHandler, config: { auth: 'cookie_token_enabled' } },
-            { method: 'GET', path: '/multiple_headers_enabled', handler: defaultHandler, config: { auth: 'multiple_headers' } },
-            { method: 'GET', path: '/custom_token_type', handler: defaultHandler, config: { auth: 'custom_token_type' } },
-            { method: 'GET', path: '/custom_unauthorized_func', handler: defaultHandler, config: { auth: 'custom_unauthorized_func' } },
-            { method: 'GET', path: '/artifacts', handler: defaultHandler, config: { auth: 'artifact_test' } },
-            { method: 'GET', path: '/chain', handler: defaultHandler, config: { auth: { strategies: ['reject_with_chain', 'default'] } } }
-        ]);
-
-        done();
-    });
-});
-
-
-after((done) => {
-
-    server = null;
-    done();
-});
-
-it('throws when no bearer options provided', (done) => {
+before(async () => {
 
     try {
-        server.auth.strategy('no_options', 'bearer-access-token', true);
+        await server.register(require('../'));
+    }
+    catch (err){
+        expect(err).to.not.exist();
+    }
+
+    server.auth.strategy('default', 'bearer-access-token', {
+        validateFunc: defaultValidateFunc
+    });
+
+    server.auth.strategy('default_named_access_token', 'bearer-access-token', {
+        validateFunc: defaultValidateFunc,
+        accessTokenName: 'my_access_token'
+    });
+
+    server.auth.strategy('always_reject', 'bearer-access-token', {
+        validateFunc: alwaysRejectValidateFunc
+    });
+
+    server.auth.strategy('with_error_strategy', 'bearer-access-token', {
+        validateFunc: alwaysErrorValidateFunc
+    });
+
+    server.auth.strategy('boom_error_strategy', 'bearer-access-token', {
+        validateFunc: boomErrorValidateFunc
+    });
+
+    server.auth.strategy('no_credentials', 'bearer-access-token', {
+        validateFunc: noCredentialValidateFunc
+    });
+
+    server.auth.strategy('query_token_enabled', 'bearer-access-token', {
+        validateFunc: defaultValidateFunc,
+        allowQueryToken: true
+    });
+
+    server.auth.strategy('query_token_enabled_renamed', 'bearer-access-token', {
+        validateFunc: defaultValidateFunc,
+        allowQueryToken: true,
+        accessTokenName: 'my_access_token'
+    });
+
+    server.auth.strategy('query_token_disabled', 'bearer-access-token', {
+        validateFunc: defaultValidateFunc,
+        allowQueryToken: false
+    });
+
+    server.auth.strategy('cookie_token_disabled', 'bearer-access-token', {
+        validateFunc: defaultValidateFunc,
+        allowCookieToken: false
+    });
+
+    server.auth.strategy('cookie_token_enabled', 'bearer-access-token', {
+        validateFunc: defaultValidateFunc,
+        allowCookieToken: true
+    });
+
+    server.auth.strategy('multiple_headers', 'bearer-access-token', {
+        validateFunc: defaultValidateFunc,
+        allowMultipleHeaders: true,
+        tokenType: 'TestToken'
+    });
+
+    server.auth.strategy('custom_token_type', 'bearer-access-token', {
+        validateFunc: defaultValidateFunc,
+        tokenType: 'Basic'
+    });
+
+    server.auth.strategy('artifact_test', 'bearer-access-token', {
+        validateFunc: artifactsValidateFunc
+    });
+
+    server.auth.strategy('reject_with_chain', 'bearer-access-token', {
+        validateFunc: alwaysRejectValidateFunc,
+        allowChaining: true
+    });
+
+    server.auth.strategy('custom_unauthorized_func', 'bearer-access-token', {
+        validateFunc: alwaysRejectValidateFunc,
+        unauthorizedFunc: (message, schema, attributed) => Boom.notFound(),
+        allowChaining: true
+    });
+
+    server.route([
+        { method: 'POST', path: '/basic', handler: defaultHandler, config: { auth: 'default' } },
+        { method: 'POST', path: '/basic_default_auth', handler: defaultHandler, config: { } },
+        { method: 'GET', path: '/basic_named_token', handler: defaultHandler, config: { auth: 'default_named_access_token' } },
+        { method: 'GET', path: '/basic_validate_error', handler: defaultHandler, config: { auth: 'with_error_strategy' } },
+        { method: 'GET', path: '/boom_validate_error', handler: defaultHandler, config: { auth: 'boom_error_strategy' } },
+        { method: 'GET', path: '/always_reject', handler: defaultHandler, config: { auth: 'always_reject' } },
+        { method: 'GET', path: '/no_credentials', handler: defaultHandler, config: { auth: 'no_credentials' } },
+        { method: 'GET', path: '/query_token_disabled', handler: defaultHandler, config: { auth: 'query_token_disabled' } },
+        { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, config: { auth: 'query_token_enabled' } },
+        { method: 'GET', path: '/query_token_enabled_renamed', handler: defaultHandler, config: { auth: 'query_token_enabled_renamed' } },
+        { method: 'GET', path: '/cookie_token_disabled', handler: defaultHandler, config: { auth: 'cookie_token_disabled' } },
+        { method: 'GET', path: '/cookie_token_enabled', handler: defaultHandler, config: { auth: 'cookie_token_enabled' } },
+        { method: 'GET', path: '/multiple_headers_enabled', handler: defaultHandler, config: { auth: 'multiple_headers' } },
+        { method: 'GET', path: '/custom_token_type', handler: defaultHandler, config: { auth: 'custom_token_type' } },
+        { method: 'GET', path: '/custom_unauthorized_func', handler: defaultHandler, config: { auth: 'custom_unauthorized_func' } },
+        { method: 'GET', path: '/artifacts', handler: defaultHandler, config: { auth: 'artifact_test' } },
+        { method: 'GET', path: '/chain', handler: defaultHandler, config: { auth: { strategies: ['reject_with_chain', 'default'] } } }
+    ]);
+
+    return;
+});
+
+
+after(() => {
+
+    server = null;
+    return;
+});
+
+it('throws when no bearer options provided', () => {
+
+    try {
+        server.auth.strategy('no_options', 'bearer-access-token', null);
     }
     catch (e) {
         expect(e.message).to.equal('Missing bearer auth strategy options');
-        done();
     }
 });
 
-it('throws when validateFunc is not provided', (done) => {
+it('throws when validateFunc is not provided', () => {
 
     try {
-        server.auth.strategy('no_options', 'bearer-access-token', true, { validateFunc: 'string' });
+        server.auth.strategy('no_options', 'bearer-access-token', { validateFunc: 'string' });
     }
     catch (e) {
         expect(e.details[0].message).to.equal('"validateFunc" must be a Function');
-        done();
     }
 });
 
-it('returns 200 and success with correct bearer token header set', (done) => {
+it('returns 200 and success with correct bearer token header set', async () => {
 
     const request = { method: 'POST', url: '/basic', headers: { authorization: 'Bearer 12345678' } };
 
-    server.inject(request, (res) => {
+    const res = await server.inject(request);
 
-        expect(res.statusCode).to.equal(200);
-        expect(res.result).to.equal('success');
-        done();
-    });
+    expect(res.statusCode).to.equal(200);
+    expect(res.result).to.equal('success');
 });
 
 

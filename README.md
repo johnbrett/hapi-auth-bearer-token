@@ -11,10 +11,9 @@ Lead Maintainer: [John Brett](https://github.com/johnbrett)
 
 Bearer authentication requires validating a token passed in by either the bearer authorization header, or by an access_token query parameter. The `'bearer-access-token'` scheme takes the following options:
 
-- `validateFunc` - (required) a token lookup and validation function with the signature `function(token, callback)` where:
+- `validateFunc` - (required) a token lookup and (async) validation function with the signature `function(token)` where:
     - `token` - the auth token received from the client.
-    - `callback` - a callback function with the signature `function(err, isValid, credentials, artifacts)` where:
-        - `err` - an internal error.
+    - The function must return an object or a Promise to an object like `{ isValid: true, credentials: {}, artifacts: {} }` where:
         - `isValid` - `true` if both the username was found and the password matched, otherwise `false`.
         - `credentials` - a credentials object passed back to the application in `request.auth.credentials`. Typically, `credentials` are only
           included when `isValid` is `true`, but there are cases when the application needs to know who tried to authenticate even when it fails
@@ -35,16 +34,17 @@ For convenience, the `request` object can be accessed from `this` within validat
 const Hapi = require('hapi');
 const AuthBearer = require('hapi-auth-bearer-token');
 
-const server = new Hapi.Server();
-server.connection({ port: 8080 });
+const server = Hapi.server({
+  port: 8080
+});
 
-server.register(AuthBearer, (err) => {
-
-    server.auth.strategy('simple', 'bearer-access-token', {
+async function start() {
+    await server.register(AuthBearer)
+    await server.auth.strategy('simple', 'bearer-access-token', {
         allowQueryToken: true,              // optional, false by default
         allowMultipleHeaders: false,        // optional, false by default
         accessTokenName: 'access_token',    // optional, 'access_token' by default
-        validateFunc: function (token, callback) {
+        validateFunc: function (token) {
 
             // For convenience, the request object can be accessed
             // from `this` within validateFunc.
@@ -53,33 +53,50 @@ server.register(AuthBearer, (err) => {
             // Use a real strategy here,
             // comparing with a token from your database for example
             if (token === "1234") {
-                return callback(null, true, { token: token }, { artifact1: 'an artifact' });
+                return {
+                    isValid: true,
+                    credentials: {
+                        token: token
+                    },
+                    artifacts: {
+                        artifact1: 'an artifact'
+                    }
+                };
             }
-
-            return callback(null, false, { token: token }, { artifact1: 'an artifact' });
+            return {
+                isValid: false,
+                credentials: {
+                    token: token
+                },
+                artifacts: {
+                    artifact1: 'an artifact'
+                }
+            }
         }
     });
 
-    server.route({
+    await server.route({
         method: 'GET',
         path: '/',
-        config: {
-           auth: 'simple',
-           handler: function (request, reply) {
+        options: {
+            auth: 'simple',
+        },
+        handler: async function (request, h) {
 
-              return reply('success');
-           }
+            return 'success';
         }
     });
 
-    server.start((err) => {
-
-        if (err) {
-          throw err;
-        }
-        console.log('Server started at: ' + server.info.uri);
+    await server.start();
+}
+start()
+    .then(() => {
+        console.log('server running');
     })
-});
+    .catch(err => {
+        console.log(err);
+        process.exit(1);
+    })
 ```
 
 License MIT @ John Brett and other contributors 2016
