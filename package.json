@@ -19,7 +19,7 @@
     "authentication"
   ],
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=8.0.0"
   },
   "dependencies": {
     "boom": "^7.1.1",
@@ -27,7 +27,7 @@
     "joi": "^13.0.1"
   },
   "peerDependencies": {
-    "hapi": ">=8.x.x"
+    "hapi": ">=17.x.x"
   },
   "devDependencies": {
     "code": "^5.1.2",
