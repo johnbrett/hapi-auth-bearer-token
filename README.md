@@ -75,7 +75,7 @@ async function start() {
         }
     });
 
-    await server.route({
+    server.route({
         method: 'GET',
         path: '/',
         options: {
