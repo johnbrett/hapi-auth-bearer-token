@@ -1,85 +1,91 @@
-# hapi auth bearer token
+### hapi auth bearer token
 
 [![NPM Version](https://img.shields.io/npm/v/hapi-auth-bearer-token.svg)](https://npmjs.org/package/hapi-auth-bearer-token)
 [![Build Status](https://travis-ci.org/johnbrett/hapi-auth-bearer-token.svg?branch=master)](https://travis-ci.org/johnbrett/hapi-auth-bearer-token)
 [![Dependency Status](https://david-dm.org/johnbrett/hapi-auth-bearer-token.svg)](https://david-dm.org/johnbrett/hapi-auth-bearer-token)
-[![Test Coverage](https://codeclimate.com/github/johnbrett/hapi-auth-bearer-token/badges/coverage.svg)](https://codeclimate.com/github/johnbrett/hapi-auth-bearer-token)
 
 Lead Maintainer: [John Brett](https://github.com/johnbrett)
 
-[**hapi**](https://github.com/hapijs/hapi) Bearer and Access Token authentication scheme
+Bearer authentication requires validating a token passed in by bearer authorization header or query parameter.
 
-Bearer authentication requires validating a token passed in by either the bearer authorization header, or by an access_token query parameter. The `'bearer-access-token'` scheme takes the following options:
+This module creates a `'bearer-access-token'` scheme takes the following options:
 
-- `validateFunc` - (required) a token lookup and validation function with the signature `function(token, callback)` where:
+- `validate` - (required) a token validation function with the signature `[async] function(request, token, h)` where:
+    - `request` - is the hapi request object of the request which is being authenticated.
     - `token` - the auth token received from the client.
-    - `callback` - a callback function with the signature `function(err, isValid, credentials, artifacts)` where:
-        - `err` - an internal error.
-        - `isValid` - `true` if both the username was found and the password matched, otherwise `false`.
-        - `credentials` - a credentials object passed back to the application in `request.auth.credentials`. Typically, `credentials` are only
-          included when `isValid` is `true`, but there are cases when the application needs to know who tried to authenticate even when it fails
-          (e.g. with authentication mode `'try'`).
+    - `h` - the response toolkit.
+    - Returns an object `{ isValid, credentials, artifacts }` where:
+        - `isValid` - `true` if token is valid, otherwise `false`.
+        - `credentials` - a credentials object passed back to the application in `request.auth.credentials`.
         - `artifacts` - optional [authentication](http://hapijs.com/tutorials/auth) related data that is not part of the user's credential.
 - `options` - (optional)
-    - `accessTokenName` (Default: 'access_token') - Rename the token query/cookie parameter key e.g. 'sample_token_name' would rename the token query parameter to /route1?sample_token_name=12345678.
-    - `allowQueryToken` (Default: false) - Allow accepting token by query parameter, meaning query parameter will be checked for the authorization token.
-    - `allowCookieToken` (Default: false) - Allow accepting token by cookie parameter, meaning cookies will be checked for authorization token as well as via other methods.
-    - `allowMultipleHeaders` (Default: false) - Allow multiple authorization headers in request, e.g. `Authorization: FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678`.
-    - `tokenType` (Default: 'Bearer') - Allow custom token type, e.g. `Authorization: Basic 12345678`.
-    - `allowChaining` (Default: false) - Allow attempt of additional authentication strategies.
-    - `unauthorizedFunc` (Default: Boom.unauthorized) - A function to call when unauthorized with signature `function([message], [scheme], [attributes])`. [More details](https://github.com/hapijs/boom#boomunauthorizedmessage-scheme-attributes)
-
-For convenience, the `request` object can be accessed from `this` within validateFunc. If you want to use this, you must use the `function` keyword instead of the arrow syntax. This allows some greater flexibility with authentication, such different authentication checks for different routes.
+    - `accessTokenName` (Default: `'access_token'`) - Rename token key e.g. 'new_name' would rename the token query parameter to `/route1?new_name=1234`.
+    - `allowQueryToken` (Default: `false`) - Accept token via query parameter.
+    - `allowCookieToken` (Default: `false`) - Accept token via cookie.
+    - `allowMultipleHeaders` (Default: `false`) - Accept multiple authorization headers, e.g. `Authorization: FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678`.
+    - `tokenType` (Default: `'Bearer'`) - Accept a custom token type e.g. `Authorization: Basic 12345678`.
+    - `allowChaining` (Default: `false`) - Allow attempt of additional authentication strategies.
+    - `unauthorizedFunc` (Default: `Boom.unauthorized`) - A function to call when unauthorized with signature `function([message], [scheme], [attributes])`. [More details](https://github.com/hapijs/boom#boomunauthorizedmessage-scheme-attributes)
 
 ```javascript
 const Hapi = require('hapi');
 const AuthBearer = require('hapi-auth-bearer-token');
 
-const server = new Hapi.Server();
-server.connection({ port: 8080 });
+const server = Hapi.server({ port: 8080 });
 
-server.register(AuthBearer, (err) => {
+const start = async () => {
+
+    await server.register(AuthBearer)
 
     server.auth.strategy('simple', 'bearer-access-token', {
         allowQueryToken: true,              // optional, false by default
-        allowMultipleHeaders: false,        // optional, false by default
-        accessTokenName: 'access_token',    // optional, 'access_token' by default
-        validateFunc: function (token, callback) {
+        validate: async (request, token, h) => {
 
-            // For convenience, the request object can be accessed
-            // from `this` within validateFunc.
-            var request = this;
+            // here is where you validate your token
+            // comparing with token from your database for example
+            const isValid = token === '1234';
 
-            // Use a real strategy here,
-            // comparing with a token from your database for example
-            if (token === "1234") {
-                return callback(null, true, { token: token }, { artifact1: 'an artifact' });
-            }
+            const credentials = { token };
+            const artifacts = { test: 'info' };
 
-            return callback(null, false, { token: token }, { artifact1: 'an artifact' });
+            return { isValid, credentials, artifacts };
         }
     });
+
+    server.auth.default('simple');
 
     server.route({
         method: 'GET',
         path: '/',
-        config: {
-           auth: 'simple',
-           handler: function (request, reply) {
+        handler: async function (request, h) {
 
-              return reply('success');
-           }
+            return { info: 'success!' };
         }
     });
 
-    server.start((err) => {
+    await server.start();
 
-        if (err) {
-          throw err;
-        }
-        console.log('Server started at: ' + server.info.uri);
+    return server;
+}
+
+start()
+    .then((server) => console.log(`Server listening on ${server.info.uri}`))
+    .catch(err => {
+
+        console.error(err);
+        process.exit(1);
     })
-});
+
+
+/*
+ * To test this example, from your terminal try:
+ *  curl localhost:8080
+ *     response: {"statusCode":401,"error":"Unauthorized","message":"Missing authentication"}
+ *  curl localhost:8080?access_token=abc
+ *     response: {"statusCode":401,"error":"Unauthorized","message":"Bad token","attributes":{"error":"Bad token"}}
+ *  curl curl localhost:8080?access_token=1234
+ *     response: {"info":"success!"}
+ */
 ```
 
-License MIT @ John Brett and other contributors 2016
+License MIT @ John Brett and other contributors 2017
