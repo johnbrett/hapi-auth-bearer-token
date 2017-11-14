@@ -152,7 +152,7 @@ before(async () => {
 
     server.auth.strategy('custom_unauthorized_func', 'bearer-access-token', {
         validate: alwaysRejectValidateFunc,
-        unauthorizedFunc: (message, schema, attributed) => Boom.notFound(),
+        unauthorized: (message, schema, attributed) => Boom.notFound(),
         allowChaining: true
     });
 
