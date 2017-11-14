@@ -1,6 +1,8 @@
 ### hapi auth bearer token 
 
-[![Build Status](https://travis-ci.org/johnbrett/hapi-auth-bearer-token.svg?branch=master)](https://travis-ci.org/johnbrett/hapi-auth-bearer-token)
+[![Build Status](https://travis-ci.org/johnbrett/hapi-auth-bearer-token.svg?branch=master)](https://travis-ci.org/johnbrett/hapi-auth-bearer-token) 
+
+[Release Notes](https://github.com/johnbrett/hapi-auth-bearer-token/issues/146) for **Version 6.0.x**
 
 Lead Maintainer: [John Brett](https://github.com/johnbrett)
 
