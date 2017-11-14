@@ -1,8 +1,6 @@
-### hapi auth bearer token
+### hapi auth bearer token 
 
-[![NPM Version](https://img.shields.io/npm/v/hapi-auth-bearer-token.svg)](https://npmjs.org/package/hapi-auth-bearer-token)
 [![Build Status](https://travis-ci.org/johnbrett/hapi-auth-bearer-token.svg?branch=master)](https://travis-ci.org/johnbrett/hapi-auth-bearer-token)
-[![Dependency Status](https://david-dm.org/johnbrett/hapi-auth-bearer-token.svg)](https://david-dm.org/johnbrett/hapi-auth-bearer-token)
 
 Lead Maintainer: [John Brett](https://github.com/johnbrett)
 
