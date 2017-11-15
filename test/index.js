@@ -506,3 +506,11 @@ it('allows you to use a custom unauthrozied function', async () => {
     expect(res.statusCode).to.equal(404);
 });
 
+it('returns 401 if no token is supplied', async () => {
+
+    const request = { method: 'POST', url: '/basic', headers: { authorization: 'Bearer' } };
+
+    const res = await server.inject(request);
+
+    expect(res.statusCode).to.equal(401);
+});

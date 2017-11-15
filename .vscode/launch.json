@@ -6,42 +6,34 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/node_modules/.bin/lab",
-      "stopOnEntry": false,
       "args": [
-        "--id", "25"
+        //"--id", "25"
       ],
       "cwd": "${workspaceRoot}",
-      "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
       ],
       "env": {
         "NODE_ENV": "development"
       },
-      "console": "internalConsole",
-      "sourceMaps": false,
-      "outDir": null
+      "console": "internalConsole"
     },
     {
       "name": "Run Single Test",
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/node_modules/.bin/lab",
-      "stopOnEntry": false,
       "args": [
-        "--verbose", "--id", "26"
+        "--verbose", "--id", "33"
       ],
       "cwd": "${workspaceRoot}",
-      "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
       ],
       "env": {
         "NODE_ENV": "development"
       },
-      "console": "internalConsole",
-      "sourceMaps": false,
-      "outDir": null
+      "console": "internalConsole"
     }
   ]
 }
