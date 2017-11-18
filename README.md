@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/johnbrett/hapi-auth-bearer-token.svg?branch=master)](https://travis-ci.org/johnbrett/hapi-auth-bearer-token) 
 
-[Release Notes](https://github.com/johnbrett/hapi-auth-bearer-token/issues/146) for **Version 6.0.x**
+[Release Notes](https://github.com/johnbrett/hapi-auth-bearer-token/issues/146) for **Version 6.0.x** which only supports hapi v17 and above. **For hapi versions below v17, please use versions v5.x.x of this module.**
 
 Lead Maintainer: [John Brett](https://github.com/johnbrett)
 
