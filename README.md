@@ -27,7 +27,7 @@ This module creates a `'bearer-access-token'` scheme takes the following options
     - `allowMultipleHeaders` (Default: `false`) - Accept multiple authorization headers, e.g. `Authorization: FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678`.
     - `tokenType` (Default: `'Bearer'`) - Accept a custom token type e.g. `Authorization: Basic 12345678`.
     - `allowChaining` (Default: `false`) - Allow attempt of additional authentication strategies.
-    - `unauthorizedFunc` (Default: `Boom.unauthorized`) - A function to call when unauthorized with signature `function([message], [scheme], [attributes])`. [More details](https://github.com/hapijs/boom#boomunauthorizedmessage-scheme-attributes)
+    - `unauthorized` (Default: `Boom.unauthorized`) - A function to call when unauthorized with signature `function([message], [scheme], [attributes])`. [More details](https://github.com/hapijs/boom#boomunauthorizedmessage-scheme-attributes)
 
 ```javascript
 const Hapi = require('hapi');
