@@ -92,4 +92,4 @@ start()
  */
 ```
 
-License MIT @ John Brett and other contributors 2017
+License MIT @ John Brett and other contributors 2018
