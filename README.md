@@ -29,7 +29,7 @@ This module creates a `'bearer-access-token'` scheme takes the following options
     - `allowChaining` (Default: `false`) - Allow attempt of additional authentication strategies.
     - `unauthorized` (Default: `Boom.unauthorized`) - A function to call when unauthorized with signature `function([message], [scheme], [attributes])`. [More details](https://github.com/hapijs/boom#boomunauthorizedmessage-scheme-attributes)
     
-        If you decide to change the default `unauthorized` function to one of your own. It is higly recommended to read the section [Authentication scheme](https://hapijs.com/api#authentication-scheme) from Hapi's official documentation. Especially in case multiple strategies should be desired one way or another. 
+        If using a custom `unauthorized` function, it is recommended you read hapi's documentation on authentication schemes, especially in the case of using multiple strategies: [Authentication scheme](https://hapijs.com/api#authentication-scheme).
 
 ```javascript
 const Hapi = require('hapi');
