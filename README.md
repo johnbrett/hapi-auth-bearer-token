@@ -1,8 +1,8 @@
-### hapi auth bearer token 
+### hapi auth bearer token
 
-[![Build Status](https://travis-ci.org/johnbrett/hapi-auth-bearer-token.svg?branch=master)](https://travis-ci.org/johnbrett/hapi-auth-bearer-token) 
+[![Build Status](https://travis-ci.org/johnbrett/hapi-auth-bearer-token.svg?branch=master)](https://travis-ci.org/johnbrett/hapi-auth-bearer-token)
 
-[Release Notes](https://github.com/johnbrett/hapi-auth-bearer-token/issues/146) for **Version 6.x.x** which only supports hapi v17 and above. 
+[Release Notes](https://github.com/johnbrett/hapi-auth-bearer-token/issues/146) for **Version 6.x.x** which only supports hapi v17 and above.
 
 **Note:** For hapi versions below v17, you must use versions v5.x.x of this module.
 
@@ -18,7 +18,7 @@ This module creates a `'bearer-access-token'` scheme takes the following options
     - `h` - the response toolkit.
     - Returns an object `{ isValid, credentials, artifacts }` where:
         - `isValid` - `true` if token is valid, otherwise `false`.
-        - `credentials` - a credentials object passed back to the application in `request.auth.credentials`.
+        - `credentials` - a credentials object passed back to the application in `request.auth.credentials`. Note that due to underlying Hapi expectations, this value must be defined even if `isValue` is `false`. We recommend it be set to `{}` if `isValid` is `false` and you have no other value to provide.
         - `artifacts` - optional [authentication](http://hapijs.com/tutorials/auth) related data that is not part of the user's credential.
 - `options` - (optional)
     - `accessTokenName` (Default: `'access_token'`) - Rename token key e.g. 'new_name' would rename the token query parameter to `/route1?new_name=1234`.
@@ -28,7 +28,7 @@ This module creates a `'bearer-access-token'` scheme takes the following options
     - `tokenType` (Default: `'Bearer'`) - Accept a custom token type e.g. `Authorization: Basic 12345678`.
     - `allowChaining` (Default: `false`) - Allow attempt of additional authentication strategies.
     - `unauthorized` (Default: `Boom.unauthorized`) - A function to call when unauthorized with signature `function([message], [scheme], [attributes])`. [More details](https://github.com/hapijs/boom#boomunauthorizedmessage-scheme-attributes)
-    
+
         If using a custom `unauthorized` function, it is recommended you read hapi's documentation on authentication schemes, especially in the case of using multiple strategies: [Authentication scheme](https://hapijs.com/api#authentication-scheme).
 
 ```javascript
