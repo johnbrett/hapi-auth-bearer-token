@@ -50,11 +50,18 @@ const boomErrorValidateFunc = (request, token) => {
 };
 
 
-const noCredentialValidateFunc = (request, token, callback) => {
+const nullCredentialValidateFunc = (request, token, callback) => {
 
     return {
         isValid: true,
         credentials: null
+    };
+};
+
+const noCredentialValidateFunc = (request, token, callback) => {
+
+    return {
+        isValid: false
     };
 };
 
@@ -102,6 +109,10 @@ describe('default single strategy', () => {
 
         server.auth.strategy('boom_error_strategy', 'bearer-access-token', {
             validate: boomErrorValidateFunc
+        });
+
+        server.auth.strategy('null_credentials', 'bearer-access-token', {
+            validate: nullCredentialValidateFunc
         });
 
         server.auth.strategy('no_credentials', 'bearer-access-token', {
@@ -167,6 +178,7 @@ describe('default single strategy', () => {
             { method: 'GET', path: '/basic_validate_error', handler: defaultHandler, options: { auth: 'with_error_strategy' } },
             { method: 'GET', path: '/boom_validate_error', handler: defaultHandler, options: { auth: 'boom_error_strategy' } },
             { method: 'GET', path: '/always_reject', handler: defaultHandler, options: { auth: 'always_reject' } },
+            { method: 'GET', path: '/null_credentials', handler: defaultHandler, options: { auth: 'null_credentials' } },
             { method: 'GET', path: '/no_credentials', handler: defaultHandler, options: { auth: 'no_credentials' } },
             { method: 'GET', path: '/query_token_disabled', handler: defaultHandler, options: { auth: 'query_token_disabled' } },
             { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, options: { auth: 'query_token_enabled' } },
@@ -320,12 +332,21 @@ describe('default single strategy', () => {
     });
 
 
-    it('returns 500 when no credentials passed to validateFunc', async () => {
+    it('returns 500 when null credentials passed to validateFunc', async () => {
+
+        const request = { method: 'GET', url: '/null_credentials', headers: { authorization: 'Bearer 12345678' } };
+        const res = await server.inject(request);
+
+        expect(res.statusCode).to.equal(500);
+    });
+
+
+    it('returns 401 when no credentials passed to validateFunc', async () => {
 
         const request = { method: 'GET', url: '/no_credentials', headers: { authorization: 'Bearer 12345678' } };
         const res = await server.inject(request);
 
-        expect(res.statusCode).to.equal(500);
+        expect(res.statusCode).to.equal(401);
     });
 
 
