@@ -18,7 +18,7 @@ This module creates a `'bearer-access-token'` scheme takes the following options
     - `h` - the response toolkit.
     - Returns an object `{ isValid, credentials, artifacts }` where:
         - `isValid` - `true` if token is valid, otherwise `false`.
-        - `credentials` - a credentials object passed back to the application in `request.auth.credentials`. Note that due to underlying Hapi expectations, this value must be defined even if `isValue` is `false`. We recommend it be set to `{}` if `isValid` is `false` and you have no other value to provide.
+        - `credentials` - a credentials object passed back to the application in `request.auth.credentials`. Note that due to underlying Hapi expectations, this value must be defined even if `isValid` is `false`. We recommend it be set to `{}` if `isValid` is `false` and you have no other value to provide.
         - `artifacts` - optional [authentication](http://hapijs.com/tutorials/auth) related data that is not part of the user's credential.
 - `options` - (optional)
     - `accessTokenName` (Default: `'access_token'`) - Rename token key e.g. 'new_name' would rename the token query parameter to `/route1?new_name=1234`.

@@ -4,6 +4,7 @@ const Lab = require('lab');
 const Code = require('code');
 const Hapi = require('hapi');
 const Boom = require('boom');
+
 const lab = exports.lab = Lab.script();
 
 const expect = Code.expect;
