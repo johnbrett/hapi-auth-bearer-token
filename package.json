@@ -32,7 +32,7 @@
   "devDependencies": {
     "code": "^5.1.2",
     "hapi": "^17.0.1",
-    "lab": "^17.0.0"
+    "lab": "^18.0.1"
   },
   "scripts": {
     "test": "lab -a code -t 100 -L",
