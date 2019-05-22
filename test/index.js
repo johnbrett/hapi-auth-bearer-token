@@ -58,6 +58,14 @@ const nullCredentialValidateFunc = (request, token, callback) => {
     };
 };
 
+const nonObjectCredentialValidateFunc = (request, token, callback) => {
+
+    return {
+        isValid: true,
+        credentials: 'invalid_credential_type'
+    };
+};
+
 const noCredentialValidateFunc = (request, token, callback) => {
 
     return {
@@ -113,6 +121,10 @@ describe('default single strategy', () => {
 
         server.auth.strategy('null_credentials', 'bearer-access-token', {
             validate: nullCredentialValidateFunc
+        });
+
+        server.auth.strategy('non_object_credentials', 'bearer-access-token', {
+            validate: nonObjectCredentialValidateFunc
         });
 
         server.auth.strategy('no_credentials', 'bearer-access-token', {
@@ -179,6 +191,7 @@ describe('default single strategy', () => {
             { method: 'GET', path: '/boom_validate_error', handler: defaultHandler, options: { auth: 'boom_error_strategy' } },
             { method: 'GET', path: '/always_reject', handler: defaultHandler, options: { auth: 'always_reject' } },
             { method: 'GET', path: '/null_credentials', handler: defaultHandler, options: { auth: 'null_credentials' } },
+            { method: 'GET', path: '/non_object_credentials', handler: defaultHandler, options: { auth: 'non_object_credentials' } },
             { method: 'GET', path: '/no_credentials', handler: defaultHandler, options: { auth: 'no_credentials' } },
             { method: 'GET', path: '/query_token_disabled', handler: defaultHandler, options: { auth: 'query_token_disabled' } },
             { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, options: { auth: 'query_token_enabled' } },
@@ -341,6 +354,15 @@ describe('default single strategy', () => {
     });
 
 
+    it('returns 500 when non object credentials passed to validateFunc', async () => {
+
+        const request = { method: 'GET', url: '/non_object_credentials', headers: { authorization: 'Bearer 12345678' } };
+        const res = await server.inject(request);
+
+        expect(res.statusCode).to.equal(500);
+    });
+
+
     it('returns 401 when no credentials passed to validateFunc', async () => {
 
         const request = { method: 'GET', url: '/no_credentials', headers: { authorization: 'Bearer 12345678' } };
@@ -376,6 +398,14 @@ describe('default single strategy', () => {
 
         expect(res.statusCode).to.equal(200);
         expect(res.result).to.equal('success');
+    });
+
+    it('returns 401 when neither query token or header auth are provided', async () => {
+
+        const requestQueryToken = { method: 'GET', url: '/query_token_enabled' };
+        const res = await server.inject(requestQueryToken);
+
+        expect(res.statusCode).to.equal(401);
     });
 
     it('allows you to enable auth by query token and rename the query param', async () => {
@@ -509,6 +539,14 @@ describe('default single strategy', () => {
         const res = await server.inject(requestCookieToken);
 
         expect(res.statusCode).to.equal(200);
+    });
+
+    it('returns 401 when neither cookie value or header auth are provided', async () => {
+
+        const requestCookieToken = { method: 'GET', url: '/cookie_token_enabled'  };
+        const res = await server.inject(requestCookieToken);
+
+        expect(res.statusCode).to.equal(401);
     });
 
     it('allows you to disable auth by cookie token', async () => {
