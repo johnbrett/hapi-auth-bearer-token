@@ -35,8 +35,8 @@
     "@hapi/lab": "^19.0.1"
   },
   "scripts": {
-    "test": "lab -t 100 -L",
-    "test-cov-html": "lab -r html -o coverage.html"
+    "test": "lab -a @hapi/code -t 100 -L",
+    "test-cov-html": "lab -a @hapi/code -r html -o coverage.html"
   },
   "bugs": {
     "url": "https://github.com/johnbrett/hapi-auth-bearer-token/issues"
