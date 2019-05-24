@@ -22,21 +22,21 @@
     "node": ">=8.0.0"
   },
   "dependencies": {
-    "boom": "^7.1.1",
-    "hoek": "^6.0.0",
-    "joi": "^14.1.0"
+    "@hapi/boom": "^7.1.1",
+    "@hapi/hoek": "^6.0.0",
+    "@hapi/joi": "^14.1.0"
   },
   "peerDependencies": {
-    "hapi": ">=17.x.x"
+    "@hapi/hapi": ">=17.x.x"
   },
   "devDependencies": {
-    "code": "^5.1.2",
-    "hapi": "^17.0.1",
-    "lab": "^17.0.0"
+    "@hapi/code": "^5.1.2",
+    "@hapi/hapi": "^17.0.1",
+    "@hapi/lab": "^19.0.1"
   },
   "scripts": {
-    "test": "lab -a code -t 100 -L",
-    "test-cov-html": "lab -a code -r html -o coverage.html"
+    "test": "lab -a @hapi/code -t 100 -L",
+    "test-cov-html": "lab -a @hapi/code -r html -o coverage.html"
   },
   "bugs": {
     "url": "https://github.com/johnbrett/hapi-auth-bearer-token/issues"

@@ -1,9 +1,9 @@
 'use strict';
 
-const Lab = require('lab');
-const Code = require('code');
-const Hapi = require('hapi');
-const Boom = require('boom');
+const Lab = require('@hapi/lab');
+const Code = require('@hapi/code');
+const Hapi = require('@hapi/hapi');
+const Boom = require('@hapi/boom');
 
 const lab = exports.lab = Lab.script();
 
@@ -55,6 +55,14 @@ const nullCredentialValidateFunc = (request, token, callback) => {
     return {
         isValid: true,
         credentials: null
+    };
+};
+
+const notObjectCredentialValidateFunc = (request, token, callback) => {
+
+    return {
+        isValid: true,
+        credentials: 'null'
     };
 };
 
@@ -115,6 +123,10 @@ describe('default single strategy', () => {
             validate: nullCredentialValidateFunc
         });
 
+        server.auth.strategy('not_object_credentials', 'bearer-access-token', {
+            validate: notObjectCredentialValidateFunc
+        });
+
         server.auth.strategy('no_credentials', 'bearer-access-token', {
             validate: noCredentialValidateFunc
         });
@@ -143,6 +155,12 @@ describe('default single strategy', () => {
         server.auth.strategy('cookie_token_enabled', 'bearer-access-token', {
             validate: defaultValidateFunc,
             allowCookieToken: true
+        });
+
+        server.auth.strategy('cookie_token_enabled_renamed', 'bearer-access-token', {
+            validate: defaultValidateFunc,
+            allowCookieToken: true,
+            accessTokenName: 'my_access_token'
         });
 
         server.auth.strategy('multiple_headers', 'bearer-access-token', {
@@ -179,12 +197,14 @@ describe('default single strategy', () => {
             { method: 'GET', path: '/boom_validate_error', handler: defaultHandler, options: { auth: 'boom_error_strategy' } },
             { method: 'GET', path: '/always_reject', handler: defaultHandler, options: { auth: 'always_reject' } },
             { method: 'GET', path: '/null_credentials', handler: defaultHandler, options: { auth: 'null_credentials' } },
+            { method: 'GET', path: '/not_object_credentials', handler: defaultHandler, options: { auth: 'not_object_credentials' } },
             { method: 'GET', path: '/no_credentials', handler: defaultHandler, options: { auth: 'no_credentials' } },
             { method: 'GET', path: '/query_token_disabled', handler: defaultHandler, options: { auth: 'query_token_disabled' } },
             { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, options: { auth: 'query_token_enabled' } },
             { method: 'GET', path: '/query_token_enabled_renamed', handler: defaultHandler, options: { auth: 'query_token_enabled_renamed' } },
             { method: 'GET', path: '/cookie_token_disabled', handler: defaultHandler, options: { auth: 'cookie_token_disabled' } },
             { method: 'GET', path: '/cookie_token_enabled', handler: defaultHandler, options: { auth: 'cookie_token_enabled' } },
+            { method: 'GET', path: '/cookie_token_enabled_renamed', handler: defaultHandler, options: { auth: 'cookie_token_enabled_renamed' } },
             { method: 'GET', path: '/multiple_headers_enabled', handler: defaultHandler, options: { auth: 'multiple_headers' } },
             { method: 'GET', path: '/custom_token_type', handler: defaultHandler, options: { auth: 'custom_token_type' } },
             { method: 'GET', path: '/custom_unauthorized_func', handler: defaultHandler, options: { auth: 'custom_unauthorized_func' } },
@@ -340,6 +360,13 @@ describe('default single strategy', () => {
         expect(res.statusCode).to.equal(500);
     });
 
+    it('returns 500 when not object type credentials passed to validateFunc', async () => {
+
+        const request = { method: 'GET', url: '/not_object_credentials', headers: { authorization: 'Bearer 12345678' } };
+        const res = await server.inject(request);
+
+        expect(res.statusCode).to.equal(500);
+    });
 
     it('returns 401 when no credentials passed to validateFunc', async () => {
 
@@ -385,6 +412,14 @@ describe('default single strategy', () => {
 
         expect(res.statusCode).to.equal(200);
         expect(res.result).to.equal('success');
+    });
+
+    it('returns 401 if no query token is supplied', async () => {
+
+        const requestQueryToken = { method: 'GET', url: '/query_token_enabled_renamed' };
+        const res = await server.inject(requestQueryToken);
+
+        expect(res.statusCode).to.equal(401);
     });
 
     it('allows you to enable auth by query token and still use header', async () => {
@@ -509,6 +544,36 @@ describe('default single strategy', () => {
         const res = await server.inject(requestCookieToken);
 
         expect(res.statusCode).to.equal(200);
+    });
+
+    it('allows you to enable auth by cookie token and rename the cookie param', async () => {
+
+        const cookie = 'my_access_token=12345678';
+        const requestCookieToken = { method: 'GET', url: '/cookie_token_enabled_renamed', headers: { cookie } };
+
+        const res = await server.inject(requestCookieToken);
+
+        expect(res.statusCode).to.equal(200);
+        expect(res.result).to.equal('success');
+    });
+
+    it('returns 401 if no cookie token is supplied', async () => {
+
+        const requestCookieToken = { method: 'GET', url: '/cookie_token_enabled_renamed' };
+        const res = await server.inject(requestCookieToken);
+
+        expect(res.statusCode).to.equal(401);
+    });
+
+    it('allows you to enable auth by cookie token and still use header', async () => {
+
+        const authorization = 'Bearer 12345678';
+        const requestCookieToken = { method: 'GET', url: '/cookie_token_enabled_renamed', headers: { authorization } };
+
+        const res = await server.inject(requestCookieToken);
+
+        expect(res.statusCode).to.equal(200);
+        expect(res.result).to.equal('success');
     });
 
     it('allows you to disable auth by cookie token', async () => {

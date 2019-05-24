@@ -32,7 +32,7 @@ This module creates a `'bearer-access-token'` scheme takes the following options
         If using a custom `unauthorized` function, it is recommended you read hapi's documentation on authentication schemes, especially in the case of using multiple strategies: [Authentication scheme](https://hapijs.com/api#authentication-scheme).
 
 ```javascript
-const Hapi = require('hapi');
+const Hapi = require('@hapi/hapi');
 const AuthBearer = require('hapi-auth-bearer-token');
 
 const server = Hapi.server({ port: 8080 });
