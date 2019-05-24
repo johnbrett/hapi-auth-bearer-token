@@ -27,7 +27,7 @@
     "@hapi/joi": "^15.0.3"
   },
   "peerDependencies": {
-    "hapi": ">=17.x.x"
+    "@hapi/hapi": ">=17.x.x"
   },
   "devDependencies": {
     "@hapi/code": "^5.3.1",
