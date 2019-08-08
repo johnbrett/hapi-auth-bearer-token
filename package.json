@@ -32,7 +32,7 @@
   "devDependencies": {
     "@hapi/code": "^5.3.1",
     "@hapi/hapi": "^17.9.0",
-    "@hapi/lab": "^19.0.1"
+    "@hapi/lab": "^20.0.0"
   },
   "scripts": {
     "test": "lab -a @hapi/code -t 100 -L",
