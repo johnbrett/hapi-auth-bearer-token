@@ -5,14 +5,8 @@ const Code = require('@hapi/code');
 const Hapi = require('@hapi/hapi');
 const Boom = require('@hapi/boom');
 
-const lab = exports.lab = Lab.script();
-
-const expect = Code.expect;
-const before = lab.before;
-const after = lab.after;
-const it = lab.it;
-const describe = lab.describe;
-
+const { expect } = Code;
+const { it, describe, before, after } = (exports.lab = Lab.script());
 
 const defaultHandler = (request, h) => {
 
