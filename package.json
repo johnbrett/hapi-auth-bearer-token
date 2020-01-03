@@ -30,7 +30,7 @@
     "@hapi/hapi": ">=17.x.x"
   },
   "devDependencies": {
-    "@hapi/code": "^7.0.0",
+    "@hapi/code": "^8.0.0",
     "@hapi/hapi": "^18.4.0",
     "@hapi/lab": "^19.1.0"
   },
