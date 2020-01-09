@@ -24,7 +24,7 @@
   "dependencies": {
     "@hapi/boom": "^7.4.2",
     "@hapi/hoek": "^7.0.0",
-    "@hapi/joi": "^15.0.3"
+    "@hapi/joi": "^17.0.2"
   },
   "peerDependencies": {
     "@hapi/hapi": ">=17.x.x"
