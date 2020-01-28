@@ -23,16 +23,16 @@
   },
   "dependencies": {
     "@hapi/boom": "^7.4.2",
-    "@hapi/hoek": "^7.0.0",
+    "@hapi/hoek": "^9.0.0",
     "@hapi/joi": "^15.0.3"
   },
   "peerDependencies": {
     "@hapi/hapi": ">=17.x.x"
   },
   "devDependencies": {
-    "@hapi/code": "^7.0.0",
+    "@hapi/code": "^8.0.0",
     "@hapi/hapi": "^18.4.0",
-    "@hapi/lab": "^19.1.0"
+    "@hapi/lab": "^22.0.3"
   },
   "scripts": {
     "test": "lab -a @hapi/code -t 100 -L",

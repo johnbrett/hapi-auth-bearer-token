@@ -87,7 +87,7 @@ describe('default single strategy', () => {
         try {
             await server.register(require('../'));
         }
-        catch (err){
+        catch (err) {
             expect(err).to.not.exist();
         }
 
@@ -592,7 +592,7 @@ describe('default chain of strategies', () => {
         try {
             await server.register(require('../'));
         }
-        catch (err){
+        catch (err) {
             expect(err).to.not.exist();
         }
 
