@@ -226,7 +226,7 @@ describe('default single strategy', () => {
             server.auth.strategy('no_options', 'bearer-access-token', { validate: 'string' });
         }
         catch (e) {
-            expect(e.details[0].message).to.equal('"validate" must be a Function');
+            expect(e.details[0].message).to.equal('"validate" must be of type function');
         }
     });
 
