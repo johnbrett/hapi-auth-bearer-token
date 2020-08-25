@@ -22,17 +22,19 @@
     "node": ">=8.0.0"
   },
   "dependencies": {
-    "@hapi/boom": "^7.4.2",
-    "@hapi/hoek": "^9.0.4",
-    "@hapi/joi": "^16.1.8"
+    "@hapi/hoek": "^9.0.0"
   },
   "peerDependencies": {
-    "@hapi/hapi": ">=19.x.x"
+    "@hapi/boom": ">=7.x.x",
+    "@hapi/hapi": ">=19.x.x",
+    "joi": ">=17.x.x"
   },
   "devDependencies": {
+    "@hapi/boom": "^9.1.0",
     "@hapi/code": "^8.0.0",
-    "@hapi/hapi": "^18.4.0",
-    "@hapi/lab": "^22.0.4"
+    "@hapi/hapi":"^20.0.0",
+    "@hapi/lab": "^23.0.0",
+    "joi": "^17.2.1"
   },
   "scripts": {
     "test": "lab -a @hapi/code -t 100 -L",
