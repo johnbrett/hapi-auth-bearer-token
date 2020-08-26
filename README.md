@@ -7,6 +7,7 @@
 A reference to joi is now required as opposed to the older @hapi/joi.
 
 For hapi 17.x and above used in combination with the new joi v17.x package.
+Requires Node 12 or greater.
 
 **Note:** For hapi v17 and above implementations using @hapi/joi, it is recommended to use **Version 6.x.x** of this module.
 
