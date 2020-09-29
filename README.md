@@ -2,7 +2,14 @@
 
 [![Build Status](https://travis-ci.org/johnbrett/hapi-auth-bearer-token.svg?branch=master)](https://travis-ci.org/johnbrett/hapi-auth-bearer-token)
 
-[Release Notes](https://github.com/johnbrett/hapi-auth-bearer-token/issues/146) for **Version 6.x.x** which only supports hapi v17 and above.
+[Release Notes]
+@hapi/hapi, joi, and @hapi/boom are all now peer dependencies to allow maximum flexibility.
+A reference to joi is now required as opposed to the older @hapi/joi.
+
+For hapi 17.x and above used in combination with the new joi v17.x package.
+Requires Node 12 or greater.
+
+**Note:** For hapi v17 and above implementations using @hapi/joi, it is recommended to use **Version 6.x.x** of this module.
 
 **Note:** For hapi versions below v17, you must use versions v5.x.x of this module.
 
