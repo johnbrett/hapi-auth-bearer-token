@@ -94,7 +94,7 @@ start()
  *     response: {"statusCode":401,"error":"Unauthorized","message":"Missing authentication"}
  *  curl localhost:8080?access_token=abc
  *     response: {"statusCode":401,"error":"Unauthorized","message":"Bad token","attributes":{"error":"Bad token"}}
- *  curl curl localhost:8080?access_token=1234
+ *  curl localhost:8080?access_token=1234
  *     response: {"info":"success!"}
  */
 ```
