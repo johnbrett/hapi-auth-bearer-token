@@ -28,11 +28,12 @@ This module creates a `'bearer-access-token'` scheme takes the following options
         - `credentials` - a credentials object passed back to the application in `request.auth.credentials`. Note that due to underlying Hapi expectations, this value must be defined even if `isValid` is `false`. We recommend it be set to `{}` if `isValid` is `false` and you have no other value to provide.
         - `artifacts` - optional [authentication](http://hapijs.com/tutorials/auth) related data that is not part of the user's credential.
 - `options` - (optional)
-    - `accessTokenName` (Default: `'access_token'`) - Rename token key e.g. 'new_name' would rename the token query parameter to `/route1?new_name=1234`.
+    - `accessTokenName` (Default: `'access_token'`) - Rename token key e.g. 'new_name' would rename the token query parameter to `/route1?new_name=1234`. Alternatively can be assign as array of strings: `accessTokenName: [ 'access_token', 'custom_access_token' ]`
+
     - `allowQueryToken` (Default: `false`) - Accept token via query parameter.
     - `allowCookieToken` (Default: `false`) - Accept token via cookie.
     - `allowMultipleHeaders` (Default: `false`) - Accept multiple authorization headers, e.g. `Authorization: FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; Bearer 12345678`.
-    - `tokenType` (Default: `'Bearer'`) - Accept a custom token type e.g. `Authorization: Basic 12345678`.
+    - `tokenType` (Default: `'Bearer'`) - Accept a custom token type e.g. `Authorization: Basic 12345678`. Alternatively can be assign as array of strings: `accessTokenName: [ 'Bearer', 'Customkey' ]`
     - `allowChaining` (Default: `false`) - Allow attempt of additional authentication strategies.
     - `unauthorized` (Default: `Boom.unauthorized`) - A function to call when unauthorized with signature `function([message], [scheme], [attributes])`. [More details](https://github.com/hapijs/boom#boomunauthorizedmessage-scheme-attributes)
 
