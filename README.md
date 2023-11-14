@@ -1,10 +1,6 @@
 ### hapi auth bearer token
 
-This is a fork of original [hapi-auth-bearer-token](https://github.com/johnbrett/hapi-auth-bearer-token) with token's multi name feature (see options)
-
-### Reason:
-
-In my private project i need to pass different bearer tokens in the same header `authorization` like usual `bearer` and like custom `apitoken`, that's impossible in original plugin.
+[![Build Status](https://travis-ci.org/johnbrett/hapi-auth-bearer-token.svg?branch=master)](https://travis-ci.org/johnbrett/hapi-auth-bearer-token)
 
 [Release Notes]
 @hapi/hapi, joi, and @hapi/boom are all now peer dependencies to allow maximum flexibility.
