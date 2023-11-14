@@ -631,3 +631,57 @@ describe('default chain of strategies', () => {
         expect(res.result).to.equal('success');
     });
 });
+
+describe('tokenType can be string and array of strings', () => {
+
+    it(`Allow to be tokenType=['Bearer', 'Token', 'Customkey']`, async () => {
+
+        const server = new Hapi.Server({ debug: false });
+        await server.register(require('../'));
+
+        server.auth.strategy('default', 'bearer-access-token', {
+            tokenType: ['Bearer', 'Token', 'Customkey'],
+            validate: defaultValidateFunc
+        });
+        server.auth.default('default');
+
+        server.route([
+            { method: 'POST', path: '/basic', handler: defaultHandler, options: { auth: 'default' } }
+        ]);
+
+        const request = { method: 'POST', url: '/basic', headers: { authorization: 'Bearer 12345678' } };
+
+        const res = await server.inject(request);
+
+        //console.log('*** res:', res)
+
+        expect(res.statusCode).to.equal(200);
+        expect(res.result).to.equal('success');
+    });
+
+    it(`Allow to be accessTokenName=['access_token', 'custom_token'] for query tokens`, async () => {
+
+        const server = new Hapi.Server({ debug: false });
+        await server.register(require('../'));
+
+        server.auth.strategy('query_token_enabled', 'bearer-access-token', {
+            accessTokenName: ['access_token', 'custom_token'],
+            validate: defaultValidateFunc,
+            allowQueryToken: true
+        });
+        server.auth.default('query_token_enabled');
+
+        server.route([
+            { method: 'GET', path: '/query_token_enabled', handler: defaultHandler, options: { auth: 'query_token_enabled' } }
+        ]);
+
+        const request = { method: 'GET', url: '/query_token_enabled?access_token=12345678' };
+
+        const res = await server.inject(request);
+
+        expect(res.statusCode).to.equal(200);
+        expect(res.result).to.equal('success');
+    });
+
+
+});
